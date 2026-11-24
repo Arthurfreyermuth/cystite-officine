@@ -6,240 +6,348 @@
 <title>Cystite Officine</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
 <style>
-/* Layout : rail sombre en verre dépoli à gauche (cadran + afficheur LCD) · questionnaire neumorphique au centre · synthèse à droite.
-   Style : surfaces gris perle en relief / en creux, panneaux bleu nuit translucides, afficheurs LCD vert-gris, rouge pour l'alerte. */
+/* Layout : rail blanc avec cadran « thermostat » · questionnaire en tuiles grises dans des cartes blanches · synthèse en tuiles chiffrées (anneaux, barres).
+   Style : monochrome gris clair / blanc / anthracite, chiffres en gras, accent orange réservé aux alertes et aux éléments actifs. */
 :root{
-  --bg:#E3E5E9; --hi:#FFFFFF; --lo:#BEC3CC;
-  --ink:#2C3041; --muted:#828797; --faint:#AAAEB9;
-  --navy:#252A3B; --navy-2:#343A52; --navy-ink:#ECEEF3; --navy-muted:#8F95AB;
-  --lcd:#B4BEA6; --lcd-ink:#283022;
-  --cool:#D4DAE4; --cool-ink:#2C3A52;
-  --alert:#E0564A; --alert-soft:#F1D8D5; --alert-ink:#992B21;
-  --ok:#45B07A;
-  --raised:7px 7px 16px var(--lo), -7px -7px 16px var(--hi);
-  --raised-sm:3px 3px 8px var(--lo), -3px -3px 8px var(--hi);
-  --inset:inset 3px 3px 7px var(--lo), inset -3px -3px 7px var(--hi);
-  --glass:rgba(255,255,255,.07); --glass-2:rgba(255,255,255,.13); --glass-line:rgba(255,255,255,.16);
+  --bg:#E1E2E3; --card:#FFFFFF; --tile:#EFF0F1; --tile-2:#D2D2D2; --line:#D2D2D2;
+  --ink:#082032; --ink-2:#2C394B; --muted:#56636F; --faint:#A3AAB2;
+  --pill:#082032; --pill-ink:#FFFFFF;
+  --dark:#2C394B; --dark-2:#334756; --dark-ink:#FFFFFF;
+  --petrol:#2C394B; --petrol-2:#082032; --petrol-3:#334756; --petrol-soft:#DCE1E6;
+  --accent:#FF4C29; --accent-soft:#FFE3DC; --accent-ink:#B42E14;
+  --shadow:0 1px 2px rgba(0,0,0,.04), 0 24px 48px -28px rgba(0,0,0,.22);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.05), 0 8px 18px -12px rgba(0,0,0,.25);
+  --ease:cubic-bezier(.2,.8,.2,1);
   --spring:cubic-bezier(.34,1.56,.64,1);
-  --font:"Montserrat","Avenir Next",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  --lcdfont:"Share Tech Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --display:"Outfit","Inter",-apple-system,BlinkMacSystemFont,sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#2A2E3B; --hi:#353A4A; --lo:#1D202A;
-  --ink:#E7E9EF; --muted:#9A9FAF; --faint:#6E7383;
-  --navy:#191C27; --navy-2:#272B3B; --navy-ink:#ECEEF3; --navy-muted:#8A90A5;
-  --lcd:#8E9A80; --lcd-ink:#1C2218;
-  --cool:#36405A; --cool-ink:#D3DCEC;
-  --alert:#E86A5E; --alert-soft:#4A2D2D; --alert-ink:#F4B7B0;
+  --bg:#061826; --card:#0D2638; --tile:#1A2E40; --tile-2:#2C394B; --line:#2C394B;
+  --ink:#EEF0F2; --ink-2:#D2D2D2; --muted:#98A4B0; --faint:#4A5A6A;
+  --pill:#D2D2D2; --pill-ink:#082032;
+  --dark:#334756; --dark-2:#2C394B; --dark-ink:#FFFFFF;
+  --petrol:#4E6478; --petrol-2:#2C394B; --petrol-3:#64809A; --petrol-soft:#1F3347;
+  --accent:#FF5A39; --accent-soft:#3D1F1A; --accent-ink:#FFB4A3;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 24px 48px -28px rgba(0,0,0,.8);
+  --shadow-sm:0 8px 18px -12px rgba(0,0,0,.8);
   color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --bg:#2A2E3B; --hi:#353A4A; --lo:#1D202A;
-  --ink:#E7E9EF; --muted:#9A9FAF; --faint:#6E7383;
-  --navy:#191C27; --navy-2:#272B3B; --navy-ink:#ECEEF3; --navy-muted:#8A90A5;
-  --lcd:#8E9A80; --lcd-ink:#1C2218;
-  --cool:#36405A; --cool-ink:#D3DCEC;
-  --alert:#E86A5E; --alert-soft:#4A2D2D; --alert-ink:#F4B7B0;
+  --bg:#061826; --card:#0D2638; --tile:#1A2E40; --tile-2:#2C394B; --line:#2C394B;
+  --ink:#EEF0F2; --ink-2:#D2D2D2; --muted:#98A4B0; --faint:#4A5A6A;
+  --pill:#D2D2D2; --pill-ink:#082032;
+  --dark:#334756; --dark-2:#2C394B; --dark-ink:#FFFFFF;
+  --petrol:#4E6478; --petrol-2:#2C394B; --petrol-3:#64809A; --petrol-soft:#1F3347;
+  --accent:#FF5A39; --accent-soft:#3D1F1A; --accent-ink:#FFB4A3;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 24px 48px -28px rgba(0,0,0,.8);
+  --shadow-sm:0 8px 18px -12px rgba(0,0,0,.8);
   color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--navy-2);outline-offset:3px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 [hidden]{display:none!important}
-.tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:6px 12px;border-radius:99px;box-shadow:var(--inset)}
-.lcd{font-family:var(--lcdfont);background:var(--lcd);color:var(--lcd-ink);border-radius:8px;padding:2px 8px;box-shadow:inset 2px 2px 4px rgba(0,0,0,.22),inset -1px -1px 2px rgba(255,255,255,.35);letter-spacing:.02em}
+.tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--muted);padding:6px 12px 6px 10px;border-radius:99px;background:var(--card);box-shadow:var(--shadow-sm)}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.mono{font-family:var(--display);font-weight:500;letter-spacing:.02em}
+
+/* ---------- animations ---------- */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+@keyframes draw{from{stroke-dashoffset:var(--len,60)}to{stroke-dashoffset:0}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}100%{box-shadow:0 0 0 10px transparent}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{from{background-position:-200% 0}to{background-position:200% 0}}
+.topbar{animation:fadeIn .8s var(--ease) both}
+.rail{animation:slideIn .8s var(--ease) .05s both}
+.summary{animation:fadeUp .8s var(--ease) .15s both}
+.main.enter > *{animation:fadeUp .6s var(--ease) both;animation-delay:calc(var(--i,0) * 70ms)}
+.main.enter .q,.main.enter .field,.main.enter .prod,.main.enter .todo li{animation:fadeUp .5s var(--ease) both;animation-delay:calc(120ms + var(--j,0) * 35ms)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 
 /* ---------- top bar ---------- */
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  padding-block:26px 22px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));max-width:1440px;margin:0 auto}
-.brand{display:flex;align-items:center;gap:16px}
-.brand-mark{width:52px;height:52px;border-radius:50%;background:var(--bg);box-shadow:var(--raised);display:grid;place-items:center;color:var(--navy-2)}
-.brand h1{font-size:30px;margin:0;font-weight:300;letter-spacing:-.01em;line-height:1.1}
-.brand p{margin:4px 0 0;font-size:12.5px;color:var(--muted);letter-spacing:.02em}
-.top-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  padding-block:26px 24px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px));max-width:1440px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{width:50px;height:50px;border-radius:50%;background:linear-gradient(160deg,var(--petrol-3),var(--petrol-2));color:var(--pill-ink);display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+.brand h1{font-family:var(--display);font-size:26px;margin:0;font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.brand p{margin:3px 0 0;font-size:13px;color:var(--muted)}
+.top-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 
-.btn{appearance:none;border:0;cursor:pointer;border-radius:99px;padding:12px 22px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .35s var(--spring),box-shadow .25s,background .2s;background:var(--bg);color:var(--ink);box-shadow:var(--raised-sm)}
-.btn:active{box-shadow:var(--inset);transform:scale(.98)}
-.btn-dark{background:linear-gradient(145deg,var(--navy-2),var(--navy));color:var(--navy-ink);box-shadow:5px 5px 14px var(--lo),-4px -4px 12px var(--hi),inset 1px 1px 0 rgba(255,255,255,.12)}
-.btn-dark:hover{transform:translateY(-1px)}
-.btn-dark:active{box-shadow:inset 3px 3px 8px rgba(0,0,0,.45)}
-.btn-soft{}
+.btn{appearance:none;border:0;cursor:pointer;border-radius:99px;padding:13px 24px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  background:var(--card);color:var(--ink);box-shadow:var(--shadow-sm);transition:transform .45s var(--spring),box-shadow .3s var(--ease),background .25s,opacity .2s;position:relative;overflow:hidden}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:scale(.96)}
+.btn .arr{display:inline-block;transition:transform .45s var(--spring)}
+.btn:hover .arr{transform:translateX(4px)}
+.btn-dark{background:linear-gradient(160deg,var(--petrol-3),var(--petrol) 45%,var(--petrol-2));color:var(--pill-ink);box-shadow:0 14px 26px -14px rgba(0,0,0,.55)}
+.btn-dark::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.18) 50%,transparent 70%);background-size:200% 100%;background-position:200% 0;transition:background-position .9s var(--ease)}
+.btn-dark:hover::after{background-position:-50% 0}
+.btn-soft{background:var(--tile)}
 .btn-ghost{background:transparent;box-shadow:none;color:var(--muted);padding:10px 14px}
-.btn-ghost:hover{color:var(--ink)}
-.btn-ghost:active{box-shadow:none}
-.btn-calm{background:var(--alert);color:#fff}
-.btn-wide{width:100%;padding:16px 22px;font-size:14.5px}
-.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn-ghost:hover{color:var(--ink);transform:none}
+.btn-calm{background:var(--accent);color:#fff}
+.btn-wide{width:100%;padding:18px 24px;font-size:15px;justify-content:space-between}
+.btn[disabled]{opacity:.55;cursor:progress;transform:none}
+.btn .spinner{width:15px;height:15px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:spin .8s linear infinite}
 
 /* ---------- shell ---------- */
-.shell{display:grid;grid-template-columns:260px minmax(0,1fr) 300px;gap:28px;align-items:start;max-width:1440px;margin:0 auto;
+.shell{display:grid;grid-template-columns:270px minmax(0,1fr) 310px;gap:26px;align-items:start;max-width:1440px;margin:0 auto;
   padding-bottom:56px;padding-left:max(24px,env(safe-area-inset-left,0px));padding-right:max(24px,env(safe-area-inset-right,0px))}
-.card{background:var(--bg);border-radius:28px;box-shadow:var(--raised)}
+.card{background:var(--card);border-radius:30px;box-shadow:var(--shadow)}
 
-/* rail sombre, verre dépoli */
-.rail{position:sticky;top:18px;padding:22px 16px 18px;display:flex;flex-direction:column;gap:18px;border-radius:30px;color:var(--navy-ink);
-  background:radial-gradient(120% 70% at 85% 0%,#3B4260 0%,transparent 60%),linear-gradient(160deg,var(--navy-2),var(--navy));
-  box-shadow:10px 10px 26px var(--lo),-8px -8px 20px var(--hi);overflow:hidden;isolation:isolate}
-.rail::before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-90px;top:-80px;background:rgba(255,255,255,.06);z-index:-1}
-.dial{position:relative;width:168px;height:168px;margin:0 auto;display:grid;place-items:center}
-.dial svg{position:absolute;inset:0;width:100%;height:100%}
-.dial-face{width:118px;height:118px;border-radius:50%;display:grid;place-items:center;align-content:center;gap:6px;
-  background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.03));border:1px solid var(--glass-line);
-  box-shadow:0 12px 24px rgba(0,0,0,.35),inset 1px 1px 0 rgba(255,255,255,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-.dial-face .lcd{font-size:26px;padding:3px 10px;border-radius:10px;font-variant-numeric:tabular-nums}
-.dial-face small{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--navy-muted)}
-.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
-.steps button{width:100%;display:flex;align-items:center;gap:12px;border:1px solid transparent;background:transparent;padding:10px 12px;border-radius:16px;cursor:pointer;text-align:left;font-size:14px;color:var(--navy-muted);transition:background .25s,color .25s}
-.steps button:hover:not([disabled]){background:var(--glass);color:var(--navy-ink)}
-.steps button[disabled]{cursor:default;opacity:.45}
-.steps button.on{background:var(--glass-2);border-color:var(--glass-line);color:#fff;font-weight:600;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.steps .dot{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,.28);display:grid;place-items:center;font-size:10px;font-weight:600;transition:all .45s var(--spring)}
-.steps button.done .dot{background:#fff;border-color:#fff;color:var(--navy)}
-.steps button.on .dot{border-color:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.08)}
+/* rail + cadran thermostat */
+.rail{position:sticky;top:18px;padding:22px 16px 16px;display:flex;flex-direction:column;gap:16px;background:var(--card);border-radius:32px;box-shadow:var(--shadow)}
+.thermo{position:relative;width:200px;height:200px;margin:0 auto}
+.thermo svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.thermo .tick{stroke:var(--faint);stroke-width:2;stroke-linecap:round;transition:stroke .4s var(--ease)}
+.thermo .tick.on{stroke:var(--petrol)}
+.thermo-track{fill:none;stroke:var(--tile-2);stroke-width:10}
+.thermo-arc{fill:none;stroke:var(--petrol);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1s var(--ease)}
+#dial-knob{fill:var(--accent);stroke:var(--card);stroke-width:3;transform-origin:100px 100px;transition:transform 1s var(--ease)}
+.thermo-core{position:absolute;inset:36px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#3E5568,#082032 75%);color:#fff;display:grid;place-items:center;align-content:center;gap:2px;
+  box-shadow:0 18px 30px -14px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.12)}
+.thermo-core .big{font-family:var(--display);font-size:42px;font-weight:500;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.thermo-core .big sup{font-size:18px;color:var(--accent);margin-left:2px;vertical-align:18px}
+.thermo-core small{font-size:11px;color:#C2CBD4;letter-spacing:.02em}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:3px}
+.steps button{width:100%;display:flex;align-items:center;gap:12px;border:0;background:transparent;padding:10px 12px;border-radius:99px;cursor:pointer;text-align:left;font-size:14px;font-weight:500;color:var(--muted);transition:background .3s var(--ease),color .3s,transform .4s var(--spring)}
+.steps button:hover:not([disabled]){background:var(--tile);color:var(--ink);transform:translateX(3px)}
+.steps button[disabled]{cursor:default;opacity:.5}
+.steps button.on{background:linear-gradient(160deg,var(--petrol-3),var(--petrol-2));color:var(--pill-ink);font-weight:600}
+.steps .dot{flex:none;width:24px;height:24px;border-radius:50%;background:var(--tile);display:grid;place-items:center;font-family:var(--display);font-size:11px;font-weight:600;transition:all .45s var(--spring)}
+.steps button.done .dot{background:var(--petrol-soft);color:var(--petrol)}
+.steps button.on .dot{background:var(--accent);color:#fff}
 
 /* ---------- main ---------- */
-.main{min-width:0;display:flex;flex-direction:column;gap:22px}
+.main{min-width:0;display:flex;flex-direction:column;gap:20px}
 .step-head{display:flex;flex-direction:column;gap:12px;padding:2px 6px 0}
-.step-head h2{margin:0;font-size:34px;font-weight:300;letter-spacing:-.015em;line-height:1.15;text-wrap:balance}
+.step-head h2{margin:0;font-family:var(--display);font-size:38px;font-weight:600;letter-spacing:-.03em;line-height:1.08;text-wrap:balance}
 .step-head p{margin:0;color:var(--muted);max-width:62ch}
-.panel{padding:12px;display:flex;flex-direction:column;gap:6px;animation:rise .55s var(--spring)}
-@keyframes rise{from{transform:translateY(10px);opacity:.4}to{transform:none;opacity:1}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-.panel-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 12px 6px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.panel{padding:14px;display:flex;flex-direction:column;gap:8px}
+.panel-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:6px 8px 4px;font-family:var(--display);font-size:17px;color:var(--ink);font-weight:600;letter-spacing:-.01em}
 
-.q{display:flex;align-items:center;justify-content:space-between;gap:18px;border-radius:20px;padding:13px 12px 13px 16px;transition:background .3s}
-.q + .q{border-top:1px solid color-mix(in srgb,var(--lo) 45%,transparent)}
+.q{display:flex;align-items:center;justify-content:space-between;gap:18px;background:var(--tile);border-radius:22px;padding:14px 14px 14px 20px;transition:background .35s var(--ease),transform .4s var(--spring)}
+.q:hover{transform:translateY(-1px)}
 .q-text{min-width:0}
-.q-label{font-weight:500}
-.q-hint{font-size:12.5px;color:var(--muted);margin-top:2px}
-.q[data-bad="1"]{background:var(--alert-soft);border-top-color:transparent}
-.q[data-bad="1"] + .q{border-top-color:transparent}
-.q[data-bad="1"] .q-hint{color:var(--alert-ink)}
+.q-label{font-weight:600}
+.q-hint{font-size:13px;color:var(--muted);margin-top:2px}
+.q[data-bad="1"]{background:var(--accent-soft)}
+.q[data-bad="1"] .q-hint{color:var(--accent-ink)}
 
-.seg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--bg);border-radius:99px;padding:5px;flex:none;min-width:164px;box-shadow:var(--inset)}
+.seg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--tile-2);border-radius:99px;padding:4px;flex:none;min-width:170px}
 .seg input{position:absolute;opacity:0;pointer-events:none}
-.seg label{position:relative;z-index:1;text-align:center;padding:8px 16px;font-size:13px;font-weight:600;color:var(--faint);cursor:pointer;border-radius:99px;transition:color .25s;white-space:nowrap}
-.seg input:checked + label{color:var(--ink)}
-.seg input:focus-visible + label{outline:2px solid var(--navy-2);outline-offset:1px}
-.seg-knob{position:absolute;top:5px;bottom:5px;left:5px;border-radius:99px;background:var(--bg);box-shadow:var(--raised-sm);opacity:0;transform:scale(.85);transition:transform .6s var(--spring),opacity .25s,background .25s;pointer-events:none}
-.seg[data-n="2"] .seg-knob{width:calc(50% - 5px)}
-.seg[data-n="3"] .seg-knob{width:calc(33.333% - 3.4px)}
+.seg label{position:relative;z-index:1;text-align:center;padding:9px 18px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:99px;transition:color .3s;white-space:nowrap}
+.seg input:checked + label{color:var(--pill-ink)}
+.seg input:focus-visible + label{outline:2px solid var(--accent);outline-offset:1px}
+.seg-knob{position:absolute;top:4px;bottom:4px;left:4px;border-radius:99px;background:linear-gradient(160deg,var(--petrol-3),var(--petrol-2));box-shadow:0 6px 14px -6px rgba(0,0,0,.5);opacity:0;transform:scale(.7);transition:transform .6s var(--spring),opacity .25s,background .3s;pointer-events:none}
+.seg[data-n="2"] .seg-knob{width:calc(50% - 4px)}
+.seg[data-n="3"] .seg-knob{width:calc(33.333% - 2.7px)}
 .seg[data-i="0"] .seg-knob{opacity:1;transform:translateX(0)}
 .seg[data-i="1"] .seg-knob{opacity:1;transform:translateX(100%)}
 .seg[data-i="2"] .seg-knob{opacity:1;transform:translateX(200%)}
-.seg[data-tone="bad"] .seg-knob{background:linear-gradient(145deg,#EA6A5E,var(--alert));box-shadow:3px 3px 8px rgba(160,40,30,.35)}
+.seg[data-tone="bad"] .seg-knob{background:linear-gradient(145deg,#FF7A5C,var(--accent));box-shadow:0 6px 16px -6px var(--accent)}
 .seg[data-tone="bad"] input:checked + label{color:#fff}
-.seg[data-tone="ok"] input:checked + label::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--ok);margin-right:7px;vertical-align:1px;box-shadow:0 0 6px var(--ok)}
 
-.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:6px 6px 8px}
-.field{display:flex;flex-direction:column;gap:5px;background:var(--bg);border-radius:20px;padding:11px 16px;box-shadow:var(--inset)}
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:2px}
+.field{display:flex;flex-direction:column;gap:4px;background:var(--tile);border-radius:20px;padding:12px 18px;border:1.5px solid transparent;transition:border-color .3s,background .3s}
 .field.wide{grid-column:1/-1}
-.field label{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.field input,.field textarea,.field select{border:0;background:transparent;padding:2px 0;font-size:15px;outline:none;width:100%;min-width:0}
-.field textarea{resize:vertical;min-height:50px}
-.field:focus-within{box-shadow:var(--inset),0 0 0 2px color-mix(in srgb,var(--navy-2) 55%,transparent)}
-.field .unit{font-size:12px;color:var(--muted);font-weight:500}
+.field label{font-size:12px;color:var(--muted);font-weight:500}
+.field input,.field textarea,.field select{border:0;background:transparent;padding:2px 0;font-size:16px;font-weight:500;outline:none;width:100%;min-width:0}
+.field input[type="number"]{font-family:var(--display);font-size:24px;font-weight:600;letter-spacing:-.02em}
+.field textarea{resize:vertical;min-height:50px;font-weight:400;font-size:15px}
+.field:focus-within{border-color:var(--petrol);background:var(--card)}
+.field .unit{font-size:14px;color:var(--muted);font-weight:500}
 .field-row{display:flex;align-items:baseline;gap:8px}
-.vital-flag{font-size:11.5px;font-weight:600;color:var(--faint)}
-.vital-flag.bad{color:var(--alert)}
-.vital-flag.ok{color:var(--ok)}
-.badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.04em;text-transform:none;font-weight:600;padding:4px 11px;border-radius:99px;background:var(--bg);color:var(--muted);box-shadow:var(--raised-sm)}
+.vital-flag{font-size:12px;font-weight:600;color:var(--muted)}
+.vital-flag.bad{color:var(--accent)}
+.vital-flag.ok{color:var(--petrol)}
+.badge{display:inline-flex;align-items:center;gap:7px;font-family:var(--font);font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;background:var(--tile);color:var(--muted)}
 .badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--faint)}
-.badge.bad{color:var(--alert-ink)}.badge.bad::before{background:var(--alert);box-shadow:0 0 6px var(--alert)}
-.badge.ok{color:var(--ink)}.badge.ok::before{background:var(--ok);box-shadow:0 0 6px var(--ok)}
-.badge.calm{color:var(--ink)}.badge.calm::before{background:var(--navy-2)}
+.badge.bad{background:var(--accent-soft);color:var(--accent-ink)}.badge.bad::before{background:var(--accent)}
+.badge.ok{color:var(--petrol)}.badge.ok::before{background:var(--petrol)}
+.badge.calm{color:var(--ink)}.badge.calm::before{background:var(--accent)}
 
-details.pharma{padding:6px 10px}
-details.pharma summary{cursor:pointer;padding:12px 8px;font-weight:600;font-size:14px;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+details.pharma{padding:8px 14px}
+details.pharma summary{cursor:pointer;padding:10px 6px;font-family:var(--display);font-weight:600;font-size:17px;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
 details.pharma summary::-webkit-details-marker{display:none}
+details.pharma .fields{padding:4px 0 8px}
 
-.notice{display:flex;gap:12px;align-items:flex-start;padding:16px 20px;border-radius:22px;background:var(--bg);box-shadow:var(--inset);font-size:14px}
+.notice{display:flex;gap:12px;align-items:flex-start;padding:16px 20px;border-radius:22px;background:var(--card);box-shadow:var(--shadow-sm);font-size:14px}
 .notice b{font-weight:600}
-.notice.bad{background:var(--alert-soft);color:var(--alert-ink);box-shadow:none}
-.notice.calm{color:var(--ink)}
-.notice.focus{background:var(--cool);color:var(--cool-ink);box-shadow:none}
+.notice.bad{background:linear-gradient(150deg,var(--accent) 40%,#9A2D17);color:#fff;box-shadow:0 14px 28px -16px var(--accent)}
+.notice.calm{background:var(--card)}
+.notice.focus{background:linear-gradient(160deg,var(--petrol),var(--petrol-2));color:var(--dark-ink)}
 .notice ol,.notice ul{margin:6px 0 0;padding-left:18px}
 
 .nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.missing{font-size:13px;color:var(--alert-ink);background:var(--alert-soft);padding:8px 14px;border-radius:99px}
+.missing{font-size:13px;font-weight:500;color:var(--accent-ink);background:var(--accent-soft);padding:9px 16px;border-radius:99px;animation:pop .45s var(--spring)}
 
-/* ---------- summary ---------- */
-.summary{position:sticky;top:18px;padding:20px;display:flex;flex-direction:column;gap:12px}
-.summary h3{margin:2px 4px 2px;font-size:24px;font-weight:300}
-#summary{display:flex;flex-direction:column;gap:10px}
-.sum-item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--bg);border-radius:18px;padding:12px 14px 12px 16px;box-shadow:var(--raised-sm)}
-.sum-item small{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.sum-item strong{font-weight:500;font-size:14.5px}
-.ring{flex:none;width:26px;height:26px;border-radius:50%;box-shadow:var(--inset);position:relative;transition:all .45s var(--spring)}
-.ring::after{content:"";position:absolute;inset:8px;border-radius:50%;background:transparent;transition:all .45s var(--spring)}
-.ring.ok::after{background:var(--ok);box-shadow:0 0 8px var(--ok)}
-.ring.calm::after{background:var(--navy-2)}
-.ring.bad::after{background:var(--alert);box-shadow:0 0 8px var(--alert)}
-.ring.half::after{background:var(--faint)}
-.decision{border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px}
-.decision small{font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.75;font-weight:600}
-.decision strong{font-size:16px;line-height:1.3;font-weight:600}
-.lv-urgent{background:linear-gradient(145deg,#EA6A5E,var(--alert));color:#fff;box-shadow:6px 6px 16px var(--lo),-5px -5px 14px var(--hi)}
-.lv-refer{background:var(--cool);color:var(--cool-ink);box-shadow:var(--raised-sm)}
-.lv-treat{background:radial-gradient(120% 90% at 90% 0%,#3D4562 0%,transparent 60%),linear-gradient(150deg,var(--navy-2),var(--navy));color:var(--navy-ink);box-shadow:6px 6px 16px var(--lo),-5px -5px 14px var(--hi)}
-.lv-neg{background:var(--lcd);color:var(--lcd-ink);box-shadow:inset 2px 2px 5px rgba(0,0,0,.2),inset -2px -2px 4px rgba(255,255,255,.3)}
-.lv-pending{background:var(--bg);color:var(--muted);box-shadow:var(--inset)}
-.privacy{font-size:12px;color:var(--muted);padding:4px 6px 0}
+/* ---------- synthèse en tuiles ---------- */
+.summary{position:sticky;top:18px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.summary h3{margin:2px 4px 0;font-family:var(--display);font-size:24px;font-weight:600;letter-spacing:-.02em}
+#summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--tile);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0;transition:background .4s var(--ease),transform .45s var(--spring)}
+.tile:hover{transform:translateY(-2px)}
+.tile.wide{grid-column:1/-1}
+.tile-h{display:flex;align-items:center;gap:7px;font-weight:600;font-size:13px;color:var(--ink)}
+.tile-h svg{flex:none}
+.tile-b{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.tile .num{display:block;font-family:var(--display);font-size:28px;font-weight:600;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.tile small{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+.tile-sub{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile.alert{background:var(--accent-soft)}
+.tile.alert .num{color:var(--accent)}
+.donut{width:38px;height:38px;flex:none}
+.d-track{fill:none;stroke:var(--tile-2);stroke-width:5}
+.d-val{fill:none;stroke:var(--petrol);stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 1s var(--ease),stroke .3s}
+.tile.alert .d-val{stroke:var(--accent)}
+.tile.alert .d-track{stroke:color-mix(in srgb,var(--accent) 22%,transparent)}
+.bars{display:flex;align-items:flex-end;gap:4px;height:38px}
+.bars i{width:7px;border-radius:4px;background:var(--faint);height:30%;transition:height .8s var(--spring),background .3s}
+.bars i.pos{height:100%;background:var(--petrol)}
+.tile.alert .bars i.pos{background:var(--accent)}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(160deg,var(--petrol-3),var(--petrol-2));color:var(--pill-ink);display:grid;place-items:center;font-family:var(--display);font-weight:600;font-size:14px;flex:none}
+.decision{grid-column:1/-1;border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:4px;transition:background .5s var(--ease),color .5s}
+.decision small{font-size:12px;font-weight:600;opacity:.7}
+.decision strong{font-family:var(--display);font-size:19px;line-height:1.2;font-weight:600;letter-spacing:-.01em}
+.decision.flash{animation:pop .55s var(--spring)}
+.lv-urgent{background:linear-gradient(150deg,var(--accent) 35%,#7A2414);color:#fff}
+.lv-refer{background:var(--dark-2);color:var(--dark-ink)}
+.lv-treat{background:radial-gradient(120% 120% at 100% 0%,var(--petrol-3) 0%,transparent 55%),linear-gradient(160deg,var(--petrol),var(--petrol-2));color:var(--dark-ink)}
+.lv-neg{background:var(--petrol-soft);color:var(--petrol-2)}
+.lv-pending{background:var(--tile);color:var(--muted)}
+.privacy{font-size:12px;color:var(--muted);padding:2px 6px 0}
 
-/* ---------- result ---------- */
-.hero{padding:26px;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;border-radius:30px;position:relative;overflow:hidden}
-.hero h3{margin:2px 0 0;font-size:28px;font-weight:400;letter-spacing:-.01em;text-wrap:balance}
-.hero p{margin:6px 0 0;opacity:.9}
-.hero .mono{font-family:var(--lcdfont)}
-.hero-icon{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.22);box-shadow:0 10px 22px rgba(0,0,0,.18);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.todo{list-style:none;margin:0;padding:4px 6px 6px;display:flex;flex-direction:column;gap:10px}
-.todo li{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-radius:18px;font-size:14px;box-shadow:var(--inset)}
-.todo input{margin-top:3px;accent-color:var(--navy-2);width:16px;height:16px}
-.prods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:6px 6px 10px}
-.prod{position:relative;display:flex;gap:12px;align-items:flex-start;background:var(--bg);border-radius:20px;padding:14px 16px;cursor:pointer;box-shadow:var(--raised-sm);transition:box-shadow .3s,transform .4s var(--spring)}
-.prod:has(input:checked){box-shadow:var(--inset)}
+/* ---------- résultat ---------- */
+.hero{padding:26px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;border-radius:32px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.hero::after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;right:-90px;bottom:-140px;background:rgba(255,255,255,.06);pointer-events:none}
+.hero h3{margin:4px 0 0;font-family:var(--display);font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1.1;text-wrap:balance}
+.hero p{margin:8px 0 0;opacity:.85;max-width:56ch}
+.hero .mono{font-size:12.5px;opacity:.75}
+.hero-icon{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);animation:pop .7s var(--spring) .15s both}
+.hero-icon svg path,.hero-icon svg circle{stroke-dasharray:60;--len:60;animation:draw 1s var(--ease) .35s both}
+.hero.lv-neg .hero-icon,.hero.lv-pending .hero-icon{background:var(--tile)}
+.hero-metric{text-align:right;padding-left:18px;border-left:1px solid rgba(255,255,255,.18)}
+.hero.lv-neg .hero-metric{border-left-color:var(--line)}
+.hero-metric b{display:block;font-family:var(--display);font-size:64px;line-height:.95;font-weight:600;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.hero-metric b sup{font-size:22px;font-weight:500;margin-left:3px;vertical-align:30px;color:var(--accent)}
+.hero.lv-urgent .hero-metric b sup{color:#fff}
+.hero-metric > span{font-size:13px;opacity:.75}
+.hero-metric .count{font-size:inherit;opacity:1}
+.todo{list-style:none;margin:0;padding:0 2px 2px;display:flex;flex-direction:column;gap:8px}
+.todo li{display:flex;gap:14px;align-items:center;background:var(--tile);padding:14px 18px;border-radius:20px;font-size:14px;transition:opacity .3s,background .3s}
+.todo li:has(input:checked){opacity:.55}
+.todo li:has(input:checked) label{text-decoration:line-through}
+.todo input{appearance:none;flex:none;width:22px;height:22px;border-radius:50%;border:1.8px solid var(--faint);display:grid;place-items:center;cursor:pointer;transition:all .4s var(--spring);margin:0}
+.todo input:checked{background:var(--petrol);border-color:var(--petrol)}
+.todo input:checked::after{content:"";width:9px;height:5px;border-left:2px solid var(--card);border-bottom:2px solid var(--card);transform:rotate(-45deg) translate(1px,-1px);animation:pop .4s var(--spring)}
+.prods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:2px}
+.prod{position:relative;display:flex;gap:14px;align-items:flex-start;background:var(--tile);border-radius:22px;padding:16px 18px;cursor:pointer;border:1.5px solid transparent;transition:transform .45s var(--spring),background .3s,border-color .3s}
+.prod:hover{transform:translateY(-3px)}
+.prod:has(input:checked){background:var(--card);border-color:var(--petrol)}
 .prod input{position:absolute;opacity:0}
-.prod .chk{flex:none;width:22px;height:22px;border-radius:50%;box-shadow:var(--inset);display:grid;place-items:center;margin-top:1px;transition:all .4s var(--spring)}
-.prod input:checked ~ .chk{background:linear-gradient(145deg,var(--navy-2),var(--navy));box-shadow:2px 2px 5px var(--lo)}
+.prod .chk{flex:none;width:24px;height:24px;border-radius:50%;border:1.8px solid var(--faint);display:grid;place-items:center;margin-top:1px;transition:all .45s var(--spring)}
+.prod input:checked ~ .chk{background:linear-gradient(145deg,#FF7A5C,var(--accent));border-color:var(--accent);transform:scale(1.08)}
 .prod input:checked ~ .chk::after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
-.prod input:focus-visible ~ .chk{outline:2px solid var(--navy-2);outline-offset:2px}
+.prod input:focus-visible ~ .chk{outline:2px solid var(--accent);outline-offset:2px}
 .prod b{display:block;font-weight:600;font-size:14px}
 .prod span.r{display:block;font-size:12.5px;color:var(--muted)}
-.custom-row{display:grid;grid-template-columns:1fr 1.6fr auto;gap:12px;padding:0 6px 8px;align-items:stretch}
-.billing{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:6px 6px 10px}
-.billing div{border-radius:20px;padding:14px 16px;box-shadow:var(--raised-sm);display:flex;flex-direction:column;gap:8px;align-items:flex-start}
-.billing small{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.billing b{font-family:var(--lcdfont);font-weight:400;font-size:22px;background:var(--lcd);color:var(--lcd-ink);border-radius:10px;padding:2px 12px;box-shadow:inset 2px 2px 4px rgba(0,0,0,.22),inset -1px -1px 2px rgba(255,255,255,.35)}
+.custom-row{display:grid;grid-template-columns:1fr 1.6fr auto;gap:10px;padding:4px 2px 2px;align-items:stretch}
+.billing{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:2px}
+.billing div{background:var(--tile);border-radius:22px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.billing small{font-size:12.5px;color:var(--muted);font-weight:500}
+.billing b{font-family:var(--display);font-weight:600;font-size:34px;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
 
-.doc-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 8px 6px}
-.tabs{display:inline-flex;border-radius:99px;padding:5px;gap:4px;box-shadow:var(--inset)}
-.tabs button{border:0;background:transparent;padding:9px 16px;border-radius:99px;font-weight:600;font-size:13px;color:var(--faint);cursor:pointer;transition:all .35s var(--spring)}
-.tabs button.on{background:var(--bg);color:var(--ink);box-shadow:var(--raised-sm)}
-.doc-actions{display:flex;gap:12px;flex-wrap:wrap}
-.preview{overflow-x:auto;padding:18px;border-radius:24px;margin:6px;box-shadow:var(--inset)}
+.doc-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:4px 2px 6px}
+.tabs{display:inline-flex;background:var(--tile);border-radius:99px;padding:4px;gap:2px;position:relative}
+.tabs button{border:0;background:transparent;padding:10px 18px;border-radius:99px;font-weight:600;font-size:13.5px;color:var(--muted);cursor:pointer;transition:all .4s var(--spring)}
+.tabs button.on{background:var(--petrol);color:var(--pill-ink)}
+.doc-actions{display:flex;gap:10px;flex-wrap:wrap}
+.preview{overflow-x:auto;padding:20px;border-radius:24px;background:var(--tile)}
 .preview-inner{display:flex;flex-direction:column;align-items:center;gap:18px;transform-origin:top center}
-.preview .page{box-shadow:8px 10px 28px rgba(30,35,50,.22)}
+.preview .page{box-shadow:0 30px 50px -30px rgba(0,0,0,.35);animation:fadeUp .6s var(--ease) both}
+.preview .page:nth-child(2){animation-delay:.1s}
 
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);opacity:0;background:rgba(37,42,59,.88);color:#fff;border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:13px 20px;border-radius:99px;font-size:14px;transition:all .5s var(--spring);z-index:50;max-width:calc(100vw - 32px)}
-.toast.show{transform:translate(-50%,0);opacity:1}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px) scale(.96);opacity:0;background:var(--petrol-2);color:var(--pill-ink);padding:14px 22px;border-radius:99px;font-size:14px;font-weight:500;transition:all .55s var(--spring);z-index:50;max-width:calc(100vw - 32px);box-shadow:0 18px 40px -16px rgba(0,0,0,.5)}
+.toast.show{transform:translate(-50%,0) scale(1);opacity:1}
+
+
+/* ---------- animations supplémentaires (bleu pétrole) ---------- */
+@keyframes ringPulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 60%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+@keyframes tileAlert{0%{transform:scale(1)}30%{transform:scale(1.05)}60%{transform:scale(.98)}100%{transform:scale(1)}}
+@keyframes sweep{0%,65%{transform:translateX(-130%) skewX(-18deg)}100%{transform:translateX(330%) skewX(-18deg)}}
+@keyframes rippleK{from{transform:translate(-50%,-50%) scale(0);opacity:.35}to{transform:translate(-50%,-50%) scale(1);opacity:0}}
+@keyframes popCheck{0%{transform:scale(.4)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+@keyframes alarm{0%,100%{box-shadow:0 14px 28px -16px var(--accent)}50%{box-shadow:0 14px 36px -6px var(--accent)}}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(-20px,16px)}}
+.steps button.on .dot{animation:ringPulse 1.8s ease-out infinite}
+.steps button.done .dot{animation:popCheck .5s var(--spring)}
+.tile.bump{animation:tileAlert .6s var(--spring)}
+.missing{animation:shake .5s var(--ease)!important}
+.notice.bad{animation:alarm 2.4s ease-in-out infinite}
+.lv-urgent{animation:alarm 2.4s ease-in-out infinite}
+.hero{isolation:isolate}
+.hero::before{content:"";position:absolute;top:0;bottom:0;left:0;width:30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);animation:sweep 6s var(--ease) 1s infinite;z-index:-1;pointer-events:none}
+.rail{position:sticky;overflow:hidden;isolation:isolate}
+.rail::after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-130px;top:-120px;background:radial-gradient(circle,color-mix(in srgb,var(--petrol-3) 22%,transparent),transparent 70%);animation:drift 12s ease-in-out infinite;z-index:-1;pointer-events:none}
+.ripple-dot{position:absolute;border-radius:50%;pointer-events:none;width:240px;height:240px;background:radial-gradient(circle,currentColor 0%,transparent 60%);animation:rippleK .7s var(--ease) forwards;z-index:0}
+.q[data-bad="1"] .seg{animation:ringPulse 1.4s ease-out 1}
+
+
+/* ---------- page d'accueil : choix du protocole ---------- */
+.home .rail,.home .summary{display:none}
+.home .shell{grid-template-columns:minmax(0,1fr)!important;max-width:1120px}
+.home #btn-home{display:none}
+.home-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:26px 0 8px}
+.home-hero h2{margin:0;font-family:var(--display);font-size:52px;font-weight:600;letter-spacing:-.035em;line-height:1.02;text-wrap:balance}
+.home-hero p{margin:0;color:var(--muted);font-size:16px;max-width:52ch}
+.proto-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.proto-card{appearance:none;border:0;text-align:left;cursor:pointer;color:var(--ink);background:var(--card);border-radius:34px;padding:30px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:20px;position:relative;overflow:hidden;isolation:isolate;transition:transform .55s var(--spring),box-shadow .4s var(--ease)}
+.proto-card::before{content:"";position:absolute;width:320px;height:320px;border-radius:50%;right:-120px;top:-150px;background:radial-gradient(circle,color-mix(in srgb,var(--petrol-3) 16%,transparent),transparent 70%);z-index:-1;transition:transform .8s var(--ease)}
+.proto-card:hover{transform:translateY(-8px);box-shadow:var(--shadow),0 0 0 2px var(--accent)}
+.proto-card:hover::before{transform:scale(1.25)}
+.proto-card:active{transform:translateY(-2px) scale(.99)}
+.proto-card:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.proto-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.proto-ic{width:80px;height:80px;border-radius:26px;display:grid;place-items:center;color:#fff;background:linear-gradient(160deg,var(--petrol-3),var(--petrol-2));box-shadow:0 18px 30px -16px rgba(8,32,50,.7);transition:transform .6s var(--spring)}
+.proto-card:hover .proto-ic{transform:rotate(-6deg) scale(1.06)}
+.proto-num{font-family:var(--display);font-size:13px;font-weight:600;color:var(--muted);background:var(--tile);padding:6px 12px;border-radius:99px}
+.proto-card h3{margin:0;font-family:var(--display);font-size:44px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.proto-meta{margin:6px 0 0;color:var(--muted);font-size:15px}
+.proto-facts{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.proto-facts li{display:flex;gap:12px;align-items:flex-start;background:var(--tile);border-radius:18px;padding:11px 16px;font-size:14px;font-weight:500}
+.proto-facts li::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:7px}
+.proto-facts small{display:block;color:var(--muted);font-size:12px;font-weight:500}
+.proto-go{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;color:#fff;border-radius:99px;padding:16px 24px;font-weight:600;font-size:15px;background:linear-gradient(160deg,var(--petrol-3),var(--petrol) 45%,var(--petrol-2));box-shadow:0 14px 26px -14px rgba(8,32,50,.7)}
+.proto-go .arr{transition:transform .5s var(--spring)}
+.proto-card:hover .proto-go .arr{transform:translateX(8px)}
+.home-note{text-align:center;color:var(--muted);font-size:13px;margin:4px 0 0}
+@media (max-width:820px){.proto-grid{grid-template-columns:minmax(0,1fr)}.home-hero h2{font-size:34px}.proto-card h3{font-size:34px}.proto-card{padding:22px}}
 
 @media (max-width:1180px){
-  .shell{grid-template-columns:230px minmax(0,1fr)}
+  .shell{grid-template-columns:240px minmax(0,1fr)}
   .summary{position:static;grid-column:2}
+  .thermo{width:180px;height:180px}
 }
 @media (max-width:820px){
-  .shell{grid-template-columns:minmax(0,1fr);gap:22px}
-  .rail{position:static;flex-direction:row;align-items:center;overflow-x:auto;padding:14px}
-  .dial{width:92px;height:92px;flex:none}
-  .dial-face{width:66px;height:66px}
-  .dial-face .lcd{font-size:15px;padding:2px 6px}
-  .dial-face small{display:none}
+  .shell{grid-template-columns:minmax(0,1fr);gap:20px}
+  .rail{position:static;flex-direction:row;align-items:center;overflow-x:auto;padding:12px}
+  .thermo{width:96px;height:96px;flex:none}
+  .thermo-core{inset:18px}
+  .thermo-core .big{font-size:20px}
+  .thermo-core .big sup{font-size:10px;vertical-align:8px}
+  .thermo-core small{display:none}
   .steps{flex-direction:row;gap:2px}
   .steps button{white-space:nowrap;padding:8px}
   .steps button .lbl{display:none}
@@ -250,18 +358,19 @@ details.pharma summary::-webkit-details-marker{display:none}
   .q{flex-direction:column;align-items:stretch}
   .seg{min-width:0}
   .hero{grid-template-columns:1fr}
-  .step-head h2{font-size:26px}
-  .brand h1{font-size:23px}
+  .hero-metric{text-align:left;border-left:0;padding-left:0}
+  .step-head h2{font-size:28px}
+  .brand h1{font-size:21px}
 }
 
 /* =====================================================================
    DOCUMENTS IMPRIMABLES (A4) — papier toujours clair, couleurs fixes
    ===================================================================== */
 .page{
-  --p-ink:#22201C; --p-muted:#6F685E; --p-line:#E4DDD2; --p-card:#F7F3ED; --p-card2:#FBF8F4;
-  --p-calm:#E8913F; --p-calm-soft:#FCE9D3; --p-calm-ink:#8A4712;
-  --p-focus:#6F879C; --p-focus-soft:#E2E9EF; --p-focus-ink:#34495B;
-  --p-alert:#C04A32; --p-alert-soft:#F9E1DA; --p-alert-ink:#842A18;
+  --p-ink:#082032; --p-muted:#56636F; --p-line:#D9DBDE; --p-card:#F1F2F3; --p-card2:#F8F8F9;
+  --p-calm:#FF4C29; --p-calm-soft:#E6EAEF; --p-calm-ink:#B42E14;
+  --p-focus:#334756; --p-focus-soft:#E3E7EB; --p-focus-ink:#2C394B;
+  --p-alert:#D63A1C; --p-alert-soft:#FCE3DC; --p-alert-ink:#8E2410;
   width:210mm;height:297mm;overflow:hidden;background:#fff;color:var(--p-ink);
   font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:10pt;line-height:1.42;
   padding:13mm 14mm 12mm;display:flex;flex-direction:column;gap:5mm;position:relative;
@@ -272,7 +381,7 @@ details.pharma summary::-webkit-details-marker{display:none}
 .p-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8mm}
 .p-pharma b{display:block;font-size:11pt}
 .p-pharma span{display:block;color:var(--p-muted);font-size:8.6pt}
-.p-tag{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:8pt;background:#F4EBD8;padding:1.6mm 3mm;border-radius:2mm;display:inline-block;color:var(--p-ink)}
+.p-tag{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:8pt;background:#E3E7EB;padding:1.6mm 3mm;border-radius:2mm;display:inline-block;color:var(--p-ink)}
 .p-right{text-align:right;display:flex;flex-direction:column;gap:1.5mm;align-items:flex-end;font-size:8.6pt;color:var(--p-muted)}
 .p-title small{display:block;color:var(--p-muted);font-size:9.5pt;margin-bottom:1mm}
 .p-title h1{margin:0;font-size:22pt;line-height:1.12;letter-spacing:-.02em;font-weight:700}
@@ -322,14 +431,16 @@ details.pharma summary::-webkit-details-marker{display:none}
 .p-prod td b{display:block}
 .p-prod td span{color:var(--p-muted);font-size:8.4pt}
 .p-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;font-size:8.4pt;color:var(--p-muted);border-top:1px solid var(--p-line);padding-top:3mm}
-.p-sign{border:1px dashed #CFC6B8;border-radius:3mm;width:60mm;height:18mm;padding:1.5mm 2.5mm;font-size:8pt;color:var(--p-muted)}
+.p-sign{border:1px dashed #B9C0C8;border-radius:3mm;width:60mm;height:18mm;padding:1.5mm 2.5mm;font-size:8pt;color:var(--p-muted)}
 .p-msg{background:var(--p-card2);border:1px solid var(--p-line);border-radius:4mm;padding:4mm 5mm;font-size:9.6pt;white-space:pre-wrap}
 .p-banner{border-radius:5mm;padding:6mm;display:flex;gap:5mm;align-items:center}
 .p-banner.urgent{background:var(--p-alert);color:#fff}
 .p-banner.refer{background:var(--p-focus-soft);color:var(--p-focus-ink)}
 .p-banner b{display:block;font-size:15pt;letter-spacing:-.01em;line-height:1.2}
 .p-banner .p-ic{flex:none;width:14mm;height:14mm;border-radius:50%;background:rgba(255,255,255,.3);display:grid;place-items:center}
-.p-pageno{position:absolute;bottom:5mm;right:14mm;font-size:7.5pt;color:#B0A799;font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.p-prod.dense td{padding:1.3mm 2mm;font-size:8.5pt;line-height:1.3}
+.p-prod.dense td span{font-size:7.8pt}
+.p-pageno{position:absolute;bottom:5mm;right:14mm;font-size:7.5pt;color:#A3AAB2;font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
 
 /* compte rendu */
 .cr-id{display:grid;grid-template-columns:repeat(3,1fr);gap:2mm;font-size:9pt}
@@ -344,7 +455,7 @@ details.pharma summary::-webkit-details-marker{display:none}
 .cr-items.three{grid-template-columns:1fr 1fr 1fr}
 .cr-it{display:flex;gap:2mm;align-items:flex-start;color:var(--p-muted)}
 .cr-it.on{color:var(--p-ink);font-weight:600}
-.cbx{flex:none;width:3.4mm;height:3.4mm;border:1.2px solid #B9AE9E;border-radius:.8mm;margin-top:.3mm;display:grid;place-items:center;background:#fff}
+.cbx{flex:none;width:3.4mm;height:3.4mm;border:1.2px solid #A3AAB2;border-radius:.8mm;margin-top:.3mm;display:grid;place-items:center;background:#fff}
 .cbx.on{background:var(--p-calm);border-color:var(--p-calm)}
 .cbx.on::after{content:"";width:1.7mm;height:.9mm;border-left:1.3px solid #fff;border-bottom:1.3px solid #fff;transform:rotate(-45deg) translateY(-.2mm)}
 .cr-table{width:100%;border-collapse:collapse;font-size:8.8pt}
@@ -372,26 +483,27 @@ details.pharma summary::-webkit-details-marker{display:none}
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3.5 4.4 6 7.7 6 11a6 6 0 1 1-12 0c0-3.3 2.5-6.6 6-11Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       </div>
       <div>
-        <h1>Cystite simple · officine</h1>
-        <p>Protocole de dépistage par bandelette urinaire chez la femme de 16 à 65 ans</p>
+        <h1 id="brand-title">Cystite simple · officine</h1>
+        <p id="brand-sub">Protocole de dépistage par bandelette urinaire chez la femme de 16 à 65 ans</p>
       </div>
     </div>
     <div class="top-actions">
       <span class="tag" id="today-tag">—</span>
-      <button class="btn btn-soft" id="btn-reset" type="button">Nouvelle patiente</button>
+      <button class="btn btn-soft" id="btn-home" type="button">Changer de protocole</button>
+      <button class="btn btn-soft" id="btn-reset" type="button">Nouveau dossier</button>
     </div>
   </header>
 
   <div class="shell">
     <aside class="rail" aria-label="Étapes">
-      <div class="dial">
-        <svg viewBox="0 0 120 120" aria-hidden="true">
-          <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>
-          <circle id="dial-arc" cx="60" cy="60" r="54" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"
-            stroke-dasharray="339.3" stroke-dashoffset="339.3" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset .8s var(--spring);filter:drop-shadow(0 0 4px rgba(255,255,255,.5))"/>
-          <circle id="dial-knob" cx="60" cy="6" r="4.5" fill="#FFFFFF" style="transform-origin:60px 60px;transition:transform .8s var(--spring)"/>
+      <div class="thermo">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <g id="ticks"></g>
+          <circle cx="100" cy="100" r="74" class="thermo-track"/>
+          <circle id="dial-arc" cx="100" cy="100" r="74" class="thermo-arc" stroke-dasharray="464.96" stroke-dashoffset="464.96" transform="rotate(-90 100 100)"/>
+          <circle id="dial-knob" cx="100" cy="26" r="7"/>
         </svg>
-        <div class="dial-face"><span class="lcd" id="dial-num">0%</span><small>progression</small></div>
+        <div class="thermo-core"><span class="big"><span id="dial-num">0</span><sup>%</sup></span><small id="dial-step">étape 1</small></div>
       </div>
       <ol class="steps" id="steps"></ol>
     </aside>
@@ -402,7 +514,7 @@ details.pharma summary::-webkit-details-marker{display:none}
       <span class="tag" style="align-self:flex-start">Synthèse en direct</span>
       <h3>Vue d'ensemble</h3>
       <div id="summary"></div>
-      <p class="privacy">Les données de la patiente restent dans ce navigateur et sont effacées avec « Nouvelle patiente ». Seules les coordonnées de la pharmacie sont mémorisées.</p>
+      <p class="privacy">Les données de la patiente restent dans ce navigateur et sont effacées avec « Nouveau dossier ». Seules les coordonnées de la pharmacie sont mémorisées.</p>
     </aside>
   </div>
 </div>
@@ -445,7 +557,7 @@ const VITALS = [
   ["fc","Fréquence cardiaque","/min","≤ 110", v => v > 110, "> 110 /min", 20, 250, 1],
   ["fr","Fréquence respiratoire","/min","≤ 20", v => v > 20, "> 20 /min", 4, 60, 1]
 ];
-const PRODUCTS = [
+const PRODUCTS_C = [
   {id:"paracetamol", name:"Paracétamol", role:"Douleurs, brûlures", poso:"1 g par prise (2 comprimés de 500 mg ou 1 de 1 g). Au moins 6 h entre deux prises, 3 g maximum par jour."},
   {id:"phloroglucinol", name:"Phloroglucinol 80 mg lyophilisat", role:"Spasmes, douleurs du bas-ventre", poso:"2 lyophilisats à laisser fondre sous la langue. Renouveler si besoin, 2 h minimum entre les prises, 6 par jour maximum."},
   {id:"canneberge", name:"Canneberge (36 mg de PAC / jour)", role:"Prévention des récidives", poso:"1 prise par jour, en cure d'au moins 1 mois. Ne remplace pas l'antibiotique. Déconseillée avec un anticoagulant AVK."},
@@ -469,6 +581,84 @@ const TIPS = [
 /* ------------------------------------------------------------------ *
  *  État
  * ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ *
+ *  Référentiels ANGINE (Assurance Maladie, sept. 2024 · HAS 2024)
+ * ------------------------------------------------------------------ */
+const URG_A = [
+  ["fievre","Fièvre rapportée supérieure à 39,5 °C","D'après le patient ou son entourage"],
+  ["digestif","Troubles digestifs importants chez l'enfant","Vomissements, diarrhée (patient de moins de 15 ans)"]
+];
+const EXCL_A = [
+  ["recueil","Recueil insuffisant des informations médicales","Non-maîtrise du français, réponses inadaptées, pas de dossier médical disponible"],
+  ["eruption","Éruption cutanée associée chez l'enfant","Patient de moins de 15 ans"],
+  ["duree","Symptômes depuis plus de 8 jours",""],
+  ["voyage","Retour d'un pays tropical depuis 2 à 5 jours","Avec vaccination antidiphtérique non à jour ou non renseignée"],
+  ["grossesse","Grossesse avérée ou non exclue",""],
+  ["immuno","Immunodépression ou risque d'immunodépression","VIH, corticothérapie au long cours, immunosuppresseurs, chimiothérapie, carbimazole, thiamazole ou dérivé"],
+  ["irc","Insuffisance rénale sévère","DFG < 30 mL/min/1,73 m² (< 40 si cefpodoxime), CKD-EPI"],
+  ["atb","Antibiothérapie en cours pour une autre raison",""],
+  ["episode","Épisode similaire dans les 15 derniers jours",""],
+  ["troisieme","3e passage pour mal de gorge en 6 mois","Sans avoir consulté son médecin traitant"],
+  ["ci","Contre-indication aux antibiotiques du protocole","Amoxicilline, céfuroxime, cefpodoxime, azithromycine, clarithromycine et josamycine (RCP)"],
+  ["catheter","Cathéter veineux implanté",""],
+  ["doute","Doute du pharmacien","Tout élément qui vous fait douter de la prise en charge à l'officine"]
+];
+const SIGNES_A = [
+  ["respi","Difficulté à respirer ou à parler",""],
+  ["trismus","Trismus","Limitation de l'ouverture de la bouche"],
+  ["hypersial","Hypersialorrhée","Salivation excessive, difficulté à avaler sa salive"],
+  ["cervical","Cervicalgie ou torticolis","Limitant les mouvements de la tête"]
+];
+const VITALS_A = [
+  ["temp","Température","°C", v => v > 39.5, "> 39,5 °C", 30, 45, 0.1],
+  ["pas","Pression artérielle systolique","mmHg", v => v < 90, "< 90 mmHg", 40, 260, 1],
+  ["fc","Fréquence cardiaque","/min", v => v > 110, "> 110 /min", 20, 250, 1],
+  ["fr","Fréquence respiratoire","/min", v => v > 20, "> 20 /min", 4, 60, 1]
+];
+const MAC = [
+  ["toux","Absence de toux",""],
+  ["adeno","Adénopathies cervicales antérieures sensibles",""],
+  ["fievre","Température supérieure à 38 °C","Mesurée ou rapportée"],
+  ["amygdale","Atteinte amygdalienne","Augmentation de volume ou exsudat"]
+];
+const ATB_A = {
+  amox:{name:"Amoxicilline", dose:"1 g", days:6, daily:"2 g par jour en 2 prises", rules:["Pendant ou en dehors des repas, avec un verre d'eau."]},
+  cefuroxime:{name:"Céfuroxime axétil", dose:"250 mg", days:4, daily:"500 mg par jour en 2 prises", rules:["À prendre après un repas : il est mieux absorbé."]},
+  cefpodoxime:{name:"Cefpodoxime proxétil", dose:"100 mg", days:5, daily:"200 mg par jour en 2 prises", rules:["À prendre au cours d'un repas."]},
+  clarithro:{name:"Clarithromycine", dose:"250 mg", days:5, daily:"500 mg par jour en 2 prises", rules:["Pendant ou en dehors des repas.","Nombreuses interactions : signalez tout autre médicament à votre pharmacien."]}
+};
+const PRODUCTS_A = [
+  {id:"paracetamol", name:"Paracétamol", role:"Fièvre, douleur", poso:"Adulte : 1 g par prise, au moins 6 h entre deux prises, 3 g maximum par jour. Enfant : 15 mg/kg par prise, 4 prises par jour au maximum."},
+  {id:"pastilles", name:"Pastilles pour la gorge", role:"Douleur de gorge", poso:"À sucer lentement, selon la notice (nombre maximal par jour et âge minimum)."},
+  {id:"collutoire", name:"Spray ou collutoire buccal", role:"Douleur de gorge", poso:"Pulvérisations au fond de la gorge selon la notice, sur une courte durée."},
+  {id:"miel", name:"Miel, boissons tièdes", role:"Adoucit la gorge", poso:"1 cuillère à café de miel ou une boisson tiède, plusieurs fois par jour."},
+  {id:"probiotiques", name:"Probiotiques (lactobacilles)", role:"Équilibre de la flore pendant l'antibiotique", poso:"1 gélule par jour pendant le traitement et la semaine qui suit."},
+  {id:"hygiene", name:"Gel hydroalcoolique et mouchoirs jetables", role:"Limiter la contagion", poso:"Après chaque mouchage, toux ou éternuement, et avant de toucher les autres."}
+];
+const TIPS_A = [
+  ["drop","Buvez régulièrement","eau, tisanes tièdes : la gorge reste hydratée"],
+  ["clock","Reposez-vous","surtout tant que la fièvre persiste"],
+  ["circle","Lavez-vous souvent les mains","ou utilisez une solution hydroalcoolique"],
+  ["no","Évitez les contacts rapprochés","pas de bisous, ni de verres ou couverts partagés"],
+  ["arrow","Toussez et éternuez dans votre coude","mouchoirs à usage unique, jetés aussitôt"],
+  ["leaf","Aérez votre logement","10 minutes, plusieurs fois par jour"],
+  ["heart","Désinfectez les surfaces partagées","poignées, téléphone, télécommande"],
+  ["no","Pas d'ibuprofène ni d'anti-inflammatoire","sans avis médical : risque de complications"]
+];
+const STEPS_A = [
+  {id:"patiente", label:"Patient", tag:"01 · identité", title:"Qui est le patient ?", intro:"Protocole, identité, circuit de prise en charge et consentement au partage des informations avec le médecin traitant et le DMP."},
+  {id:"a-symptomes", spont:true, label:"Motif", tag:"02 · motif", title:"Mal de gorge évocateur d'angine", intro:"Le protocole concerne le mal de gorge provoqué ou augmenté par la déglutition."},
+  {id:"a-urgence", spont:true, label:"Critères d'urgence", tag:"03 · urgence", title:"Critères d'exclusion d'urgence", intro:"Un seul « oui » impose une consultation médicale en urgence : la prise en charge à l'officine s'arrête là."},
+  {id:"a-exclusion", spont:true, label:"Exclusions", tag:"04 · exclusion", title:"Autres critères d'exclusion", intro:"Un seul « oui », ou un doute de votre part, oriente le patient vers un médecin dans les 24 heures."},
+  {id:"a-examen", spont:true, label:"Examen de la gorge", tag:"05 · examen", title:"Complications locales et gravité", intro:"Examen endobuccal à la recherche d'un phlegmon de l'amygdale. Constantes facultatives ; un signe présent impose une consultation en urgence."},
+  {id:"a-score", spont:true, label:"Score de Mac Isaac", tag:"06 · score", title:"Score de Mac Isaac", intro:"À partir de 15 ans. Un score de 2 ou plus justifie le TROD ; de 0 ou 1, traitement symptomatique sans test."},
+  {id:"antecedents", label:"Allergies", tag:"07 · interrogatoire", title:"Allergies et antécédents", intro:"Les allergies conditionnent le choix de l'antibiotique. Les réponses libres sont reportées dans le compte rendu."},
+  {id:"a-trod", label:"TROD angine", tag:"08 · test", title:"TROD angine", intro:"Test rapide d'orientation diagnostique du streptocoque A, réalisé après accord du patient ou de son représentant légal."},
+  {id:"resultat", label:"Résultat & fiches", tag:"09 · documents", title:"Résultat et documents à remettre", intro:"Choisissez les produits conseillés, puis téléchargez ou imprimez la fiche patient et le compte rendu pour le DMP."}
+];
+const isA = () => S.proto==="angine";
+const PRODS = () => isA() ? PRODUCTS_A : PRODUCTS_C;
+
 const blank = () => ({
   circuit:"spontanee",
   nom:"", prenom:"", age:"", nir:"", medecin:"", consent:null,
@@ -480,11 +670,15 @@ const blank = () => ({
   hist:{maladies:"",allergies:"",traitements:"",evenement:"",autre:""},
   bu:{accord:null,realisable:null,leuco:null,nitrites:null,hematurie:null,autre:""},
   ordoAtb:"fosfo",
+  proto:"cystite",
+  ang:{odyno:null, urg:{fievre:null,digestif:null}, excl:Object.fromEntries(EXCL_A.map(e=>[e[0],null])), clin:{temp:"",pas:"",fc:"",fr:""},
+       signes:{respi:null,trismus:null,hypersial:null,cervical:null}, mac:{toux:null,adeno:null,fievre:null,amygdale:null},
+       poids:"", forceTrod:false, peni:null, ciCeph:null, alt:"cefuroxime", ordoOk:null, ordoAtb:"amox", trod:{accord:null,realisable:null,result:null}},
   products:null, custom:[], notes:"", noteOnFiche:"oui"
 });
 let S = blank();
 let P = loadPharma();
-let cur = "patiente";
+let cur = "accueil";
 let visited = new Set(["patiente"]);
 let docTab = "fiche";
 
@@ -495,7 +689,7 @@ function loadPharma(){
 }
 function savePharma(){ try{ localStorage.setItem("cystite.pharma", JSON.stringify(P)); }catch(e){} }
 
-const STEPS = [
+const STEPS_C = [
   {id:"patiente", label:"Patiente", tag:"01 · identité", title:"Qui est la patiente ?", intro:"Identité, circuit de prise en charge et consentement au partage des informations avec le médecin traitant et le DMP."},
   {id:"symptomes", spont:true, label:"Symptômes", tag:"02 · motif", title:"Symptômes évocateurs de cystite", intro:"Au moins un signe fonctionnel urinaire d'apparition récente est nécessaire pour entrer dans le protocole."},
   {id:"urgence", spont:true, label:"Signes de gravité", tag:"03 · urgence", title:"Signes de gravité à rechercher", intro:"Un seul « oui » impose une consultation médicale en urgence : la prise en charge à l'officine s'arrête là."},
@@ -505,7 +699,8 @@ const STEPS = [
   {id:"bandelette", label:"Bandelette", tag:"07 · test", title:"Bandelette urinaire", intro:"Recueil d'urine de milieu de jet après toilette. Lecture des leucocytes et des nitrites au temps indiqué par le fabricant."},
   {id:"resultat", label:"Résultat & fiches", tag:"08 · documents", title:"Résultat et documents à remettre", intro:"Choisissez les produits conseillés, puis téléchargez ou imprimez la fiche patiente et le compte rendu pour le DMP."}
 ];
-const active = () => STEPS.filter(s => !(s.spont && S.circuit==="orientee"));
+const curSteps = () => isA() ? STEPS_A : STEPS_C;
+const active = () => curSteps().filter(s => !(s.spont && S.circuit==="orientee") && !(s.id==="a-score" && childA()));
 
 /* ------------------------------------------------------------------ *
  *  Outils
@@ -525,6 +720,7 @@ function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("sh
  *  Arbre de décision
  * ------------------------------------------------------------------ */
 function decide(){
+  if(isA()) return decideA();
   const R = (code, o={}) => Object.assign({code, reasons:[], items:{1:[],2:[],3:null,4:[]}, buDone:false, hematurie:false}, o);
   const age = num(S.age);
   const bu = S.bu;
@@ -649,14 +845,15 @@ const ICON = {
 };
 
 function stepBody(id){
+  if(id.startsWith("a-") || (id==="antecedents" && isA())) return stepBodyA(id);
   switch(id){
   case "patiente": {
     const age = num(S.age);
-    const ageBadge = age===null ? "" : (S.circuit==="spontanee" ? ((age<16||age>65) ? `<span class="badge bad">Hors protocole : 16 à 65 ans</span>` : `<span class="badge ok">Âge éligible</span>`) : (age<16 ? `<span class="badge bad">Moins de 16 ans</span>`:`<span class="badge ok">16 ans et plus</span>`));
+    const ageBadge = ageBadgeHTML();
     return `
     <div class="panel card">
       <div class="panel-title">Circuit de prise en charge</div>
-      ${q("circuit","Comment la patiente arrive-t-elle ?", S.circuit==="orientee" ? "Ordonnance de dispensation conditionnelle « si BU+ » d'un médecin ou d'une sage-femme" : "Patiente qui se présente spontanément : protocole complet d'éligibilité", {rerender:true}, [["spontanee","Spontanée"],["orientee","Avec ordonnance"]])}
+      ${q("circuit", isA()?"Comment le patient arrive-t-il ?":"Comment la patiente arrive-t-elle ?", S.circuit==="orientee" ? (isA()?"Ordonnance de dispensation conditionnelle « si TROD angine+ » d'un médecin":"Ordonnance de dispensation conditionnelle « si BU+ » d'un médecin ou d'une sage-femme") : (isA()?"Patient qui se présente spontanément : protocole complet d'éligibilité":"Patiente qui se présente spontanément : protocole complet d'éligibilité"), {rerender:true}, [["spontanee","Spontanée"],["orientee","Avec ordonnance"]])}
     </div>
     <div class="panel card">
       <div class="panel-title">Identité <span id="age-badge">${ageBadge}</span></div>
@@ -665,9 +862,10 @@ function stepBody(id){
         ${field("prenom","Prénom",{attrs:'autocomplete="off"'})}
         ${field("age","Âge",{type:"number",attrs:'min="0" max="120" inputmode="numeric"',unit:"ans"})}
         ${field("nir","N° de sécurité sociale",{ph:"1 23 45 67 890 123 45",attrs:'inputmode="numeric" autocomplete="off"'})}
-        ${field("medecin","Médecin traitant",{wide:true,ph:S.circuit==="orientee"?"Prescripteur de l'ordonnance conditionnelle":"Dr …"})}
+        ${isA()?field("ang.poids","Poids (obligatoire avant 15 ans)",{type:"number",unit:"kg",attrs:'min="5" max="200" step="0.5" inputmode="decimal"'}):""}
+        ${field("medecin","Médecin traitant",{wide:!isA(),ph:S.circuit==="orientee"?"Prescripteur de l'ordonnance conditionnelle":"Dr …"})}
       </div>
-      ${q("consent","Consentement de la patiente","Accepte la prise en charge, le partage des informations avec son médecin traitant et l'enregistrement du compte rendu dans son DMP",{bad:"non",ok:"oui",rerender:true})}
+      ${q("consent",isA()?"Consentement du patient ou de son représentant légal":"Consentement de la patiente","Accepte la prise en charge, le partage des informations avec son médecin traitant et l'enregistrement du compte rendu dans son DMP",{bad:"non",ok:"oui",rerender:true})}
     </div>
     <details class="pharma card" ${P.nom?"":"open"}>
       <summary><span>Pharmacie et pharmacien</span><span class="badge ${P.nom?"ok":"calm"}">${P.nom?esc(P.nom):"à renseigner une fois"}</span></summary>
@@ -694,7 +892,7 @@ function stepBody(id){
       ${URG.map(u=>q("urg."+u[0],u[1],u[2],{bad:"oui",ok:"non"})).join("")}
     </div>`;
   case "exclusion":
-    return `<button class="btn btn-dark btn-wide" id="btn-allno" type="button">Aucun critère d'exclusion : tout mettre à « Non » et continuer →</button>
+    return `<button class="btn btn-dark btn-wide" id="btn-allno" type="button">Aucun critère d'exclusion : tout mettre à « Non » et continuer <span class="arr">→</span></button>
     <div class="panel card">
       <div class="panel-title">Antécédents et situation <span class="badge bad">oui = médecin sous 24 h</span></div>
       ${EXCL.map(e=>q("excl."+e[0],e[1],e[2],{bad:"oui",ok:"non"})).join("")}
@@ -768,7 +966,7 @@ function stepBody(id){
 function resultBody(){
   const d = decide();
   if(d.code==="incomplet"){
-    const st = STEPS.find(s=>s.id===d.stage);
+    const st = curSteps().find(s=>s.id===d.stage);
     return `<div class="notice calm"><div><b>Questionnaire incomplet.</b> Il manque des réponses à l'étape « ${esc(st.label)} ».</div></div>
       <div><button class="btn btn-dark" data-go="${d.stage}" type="button">Reprendre à l'étape ${esc(st.label)}</button></div>`;
   }
@@ -780,7 +978,8 @@ function resultBody(){
   return `
   <div class="hero lv-${o.lv}">
     <div class="hero-icon">${icon}</div>
-    <div><span class="mono" style="font-size:12px;opacity:.8">${esc(decisionTag(d))}</span><h3>${esc(o.label)}</h3><p>${sub}</p></div>
+    <div><span class="mono">${esc(decisionTag(d))}</span><h3>${esc(o.label)}</h3><p>${sub}</p></div>
+    ${heroMetric(d)}
   </div>
   ${d.hematurie && d.code!=="medecin" ? `<div class="notice bad"><div><b>Sang détecté dans les urines.</b> Rendez-vous médical systématique à prévoir, même si l'épisode de cystite se résout.</div></div>`:""}
   <div class="panel card">
@@ -788,10 +987,10 @@ function resultBody(){
     <ul class="todo">${todo.map((t,i)=>`<li><input type="checkbox" id="todo-${i}"><label for="todo-${i}">${t}</label></li>`).join("")}</ul>
   </div>
   ${d.buDone ? `<div class="panel card"><div class="panel-title">Facturation</div>
-    <div class="billing"><div><small>Code acte</small><b class="mono">PEE</b></div><div><small>Montant TTC (métropole)</small><b>${d.pee} €</b></div><div><small>DROM</small><b>${d.pee===15?"15,75":"10,50"} €</b></div></div></div>`:""}
+    <div class="billing"><div><small>Code acte</small><b class="mono">${isA()?"TRD":"PEE"}</b></div><div><small>Montant TTC (métropole)</small><b>${d.pee} €</b></div><div><small>DROM</small><b>${d.pee===15?"15,75":"10,50"} €</b></div></div></div>`:""}
   ${d.code!=="urgence" ? `<div class="panel card">
     <div class="panel-title">Produits conseillés à reporter sur la fiche <span class="badge calm">${S.products.size} choisi${S.products.size>1?"s":""}</span></div>
-    <div class="prods">${PRODUCTS.map(p=>`<label class="prod" for="pr-${p.id}"><input type="checkbox" id="pr-${p.id}" data-prod="${p.id}" ${S.products.has(p.id)?"checked":""}><span class="chk"></span><span><b>${esc(p.name)}</b><span class="r">${esc(p.role)}</span></span></label>`).join("")}</div>
+    <div class="prods">${PRODS().map(p=>`<label class="prod" for="pr-${p.id}"><input type="checkbox" id="pr-${p.id}" data-prod="${p.id}" ${S.products.has(p.id)?"checked":""}><span class="chk"></span><span><b>${esc(p.name)}</b><span class="r">${esc(p.role)}</span></span></label>`).join("")}</div>
     ${S.custom.map((c,i)=>`<div class="notice"><div style="flex:1"><b>${esc(c.name)}</b> · ${esc(c.poso)}</div><button class="btn btn-ghost" data-rmcustom="${i}" type="button">Retirer</button></div>`).join("")}
     <div class="custom-row">
       <div class="field"><label for="c-name">Autre produit</label><input id="c-name" placeholder="Nom"></div>
@@ -823,13 +1022,22 @@ function resultBody(){
   </div>`;
 }
 
+function heroMetric(d){
+  if(isA()) return heroMetricA(d);
+  const m = {fosfo:[3,"g","1 sachet · prise unique"], pivme:[6,"prises","3 jours · matin et soir"], medecin:[24,"h","consultation médicale"],
+    ordo_impossible:[24,"h","contacter le prescripteur"], negatif:[0,"ATB","conseils seuls"], ordo_neg:[0,"ATB","pas de dispensation"], ordo_pos:[1,"ATB","selon l'ordonnance"]}[d.code];
+  if(!m) return "";
+  return `<div class="hero-metric"><b><span class="count" data-to="${m[0]}">0</span><sup>${m[1]}</sup></b><span>${m[2]}</span></div>`;
+}
 function decisionTag(d){
+  if(isA()) return decisionTagA(d);
   const b = S.bu;
   if(!d.buDone) return "BU non réalisée";
   if(b.realisable==="non") return "BU non interprétable";
   return `BU · leucocytes ${b.leuco==="pos"?"+":"−"} · nitrites ${b.nitrites==="pos"?"+":"−"} · sang ${b.hematurie==="pos"?"+":"−"}`;
 }
 function heroSub(d){
+  if(isA()) return heroSubA(d);
   switch(d.code){
     case "urgence": return "Adresser la patiente à un médecin en urgence ou vers une structure d'urgence. Motif : "+esc(d.reasons.join(" · "));
     case "medecin": return "La prise en charge à l'officine n'est pas possible. Motif : "+esc(d.reasons.join(" · "))+(d.ecbu?" · Remettre une demande d'ECBU au médecin.":"");
@@ -843,6 +1051,7 @@ function heroSub(d){
   return "";
 }
 function pharmacistTodo(d){
+  if(isA()) return pharmacistTodoA(d);
   const t = [];
   const med = S.medecin.trim() ? esc(S.medecin.trim()) : "le médecin traitant";
   if(d.code==="urgence") t.push("Orienter immédiatement vers un médecin ou une structure d'urgence (organisation territoriale). Appeler le 15 si l'état le justifie.");
@@ -861,6 +1070,7 @@ function pharmacistTodo(d){
   return t;
 }
 function ensureProducts(d){
+  if(isA()) return ensureProductsA(d);
   if(S.products && S._prodFor===d.code) return;
   if(S.products && S._prodTouched) { S._prodFor=d.code; return; }
   const def = {
@@ -880,6 +1090,7 @@ function ensureProducts(d){
  *  Validation d'étape
  * ------------------------------------------------------------------ */
 function missingFor(id){
+  if(isA()) return missingForA(id);
   const m=[];
   if(id==="patiente"){
     if(!S.nom.trim()) m.push("nom"); if(!S.prenom.trim()) m.push("prénom");
@@ -903,10 +1114,501 @@ function missingFor(id){
 /* ------------------------------------------------------------------ *
  *  Rendu
  * ------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ *
+ *  PROTOCOLE ANGINE : étapes, décision, synthèse, documents
+ * ------------------------------------------------------------------ */
+Object.assign(OUTCOME, {
+  a_sympto:{lv:"neg", label:"Traitement symptomatique · pas de TROD"},
+  a_neg:{lv:"neg", label:"TROD négatif · pas d'antibiotique"},
+  a_amox:{lv:"treat", label:"Amoxicilline · 6 jours"},
+  a_cefuroxime:{lv:"treat", label:"Céfuroxime axétil · 4 jours"},
+  a_cefpodoxime:{lv:"treat", label:"Cefpodoxime proxétil · 5 jours"},
+  a_clarithro:{lv:"treat", label:"Clarithromycine · 5 jours"},
+  a_ordo_pos:{lv:"treat", label:"Dispensation de l'antibiotique prescrit"},
+  a_ordo_neg:{lv:"neg", label:"Pas de dispensation · informer le prescripteur"},
+  a_contact:{lv:"refer", label:"Contacter le médecin prescripteur"}
+});
+const childA = () => { const a = num(S.age); return a!==null && a<15; };
+const bdg = (cls,t) => `<span class="badge ${cls}">${t}</span>`;
+function ageBadgeHTML(){
+  const age = num(S.age); if(age===null) return "";
+  if(!isA()) return S.circuit==="spontanee" ? ((age<16||age>65) ? bdg("bad","Hors protocole : 16 à 65 ans") : bdg("ok","Âge éligible")) : (age<16 ? bdg("bad","Moins de 16 ans") : bdg("ok","16 ans et plus"));
+  if(S.circuit==="orientee") return age<3 ? bdg("bad","Moins de 3 ans") : bdg("ok","3 ans et plus");
+  return age<10 ? bdg("bad","Moins de 10 ans : hors protocole") : (age<15 ? bdg("calm","10 à 14 ans : TROD sans score, poids requis") : bdg("ok","15 ans et plus : score de Mac Isaac"));
+}
+function protoPanel(){
+  return `<div class="panel card"><div class="panel-title">Protocole</div>
+    ${q("proto","Quel dépistage réalisez-vous ?", isA() ? "TROD angine : recherche du streptocoque A" : "Bandelette urinaire : cystite simple de la femme", {rerender:true}, [["cystite","Cystite"],["angine","Angine"]])}</div>`;
+}
+function updateBrand(){
+  const h = $("#brand-title"), p = $("#brand-sub"); if(!h) return;
+  if(cur==="accueil"){ h.textContent = "Dépistage à l'officine"; p.textContent = "Cystite et angine : questionnaire, test, conseils et compte rendu DMP"; return; }
+  if(isA()){ h.textContent = "Angine · officine"; p.textContent = "Protocole TROD angine : dès 10 ans en accès direct, dès 3 ans avec ordonnance conditionnelle"; }
+  else { h.textContent = "Cystite simple · officine"; p.textContent = "Protocole de dépistage par bandelette urinaire chez la femme de 16 à 65 ans"; }
+}
+function macScore(){
+  const m = S.ang.mac;
+  if(Object.values(m).some(v=>v==null)) return null;
+  let s = MAC.filter(x=>m[x[0]]==="oui").length;
+  if((num(S.age)||0) > 50) s -= 1;
+  return s;
+}
+function amoxChild(){
+  const kg = num(S.ang.poids); if(kg===null) return null;
+  return {per:Math.min(1000, Math.round(kg*25)), daily:Math.min(2000, Math.round(kg*50)), kg};
+}
+function rxA(key){
+  const a = ATB_A[key]; if(!a) return null;
+  let per = a.dose, daily = a.daily;
+  if(key==="amox" && childA()){ const c = amoxChild(); if(c){ per = `${c.per} mg`; daily = `${c.daily} mg par jour en 2 prises (50 mg/kg/j pour ${String(c.kg).replace(".",",")} kg, 2 g maximum)`; } }
+  return Object.assign({}, a, {per, daily});
+}
+
+/* ---------- étapes ---------- */
+function stepBodyA(id){
+  const A = S.ang, child = childA();
+  switch(id){
+  case "a-symptomes":
+    return `<div class="panel card"><div class="panel-title">Motif de venue</div>
+      ${q("ang.odyno","Mal de gorge provoqué ou augmenté par la déglutition ?","Odynophagie, signe d'appel de l'angine",{bad:"non",ok:"oui"})}</div>`;
+  case "a-urgence":
+    return `<div class="panel card"><div class="panel-title">Interrogatoire <span class="badge bad">oui = urgence</span></div>
+      ${URG_A.filter(u=>u[0]!=="digestif"||child).map(u=>q("ang.urg."+u[0],u[1],u[2],{bad:"oui",ok:"non"})).join("")}</div>`;
+  case "a-exclusion":
+    return `<button class="btn btn-dark btn-wide" id="btn-allno" type="button">Aucun critère d'exclusion : tout mettre à « Non » et continuer <span class="arr">→</span></button>
+    <div class="panel card"><div class="panel-title">Antécédents et situation <span class="badge bad">oui = médecin sous 24 h</span></div>
+      ${EXCL_A.filter(e=>e[0]!=="eruption"||child).map(e=>q("ang.excl."+e[0],e[1],e[2],{bad:"oui",ok:"non"})).join("")}</div>`;
+  case "a-examen":
+    return `<div class="panel card"><div class="panel-title">Constantes (facultatif)</div>
+      <div class="fields">${VITALS_A.map(v=>{
+        const n = num(A.clin[v[0]]);
+        const flag = n===null ? `<span class="vital-flag" data-flag="a${v[0]}">seuil ${v[4]}</span>` : (v[3](n) ? `<span class="vital-flag bad" data-flag="a${v[0]}">hors seuil · ${v[4]}</span>` : `<span class="vital-flag ok" data-flag="a${v[0]}">normal</span>`);
+        return `<div class="field"><label for="f-ang-clin-${v[0]}">${v[1]}</label><div class="field-row"><input id="f-ang-clin-${v[0]}" type="number" step="${v[7]}" min="${v[5]}" max="${v[6]}" inputmode="decimal" data-k="ang.clin.${v[0]}" value="${esc(A.clin[v[0]])}"><span class="unit">${v[2]}</span></div>${flag}</div>`;
+      }).join("")}</div></div>
+    <div class="panel card"><div class="panel-title">Examen endobuccal <span class="badge bad">oui = urgence</span></div>
+      ${SIGNES_A.map(s=>q("ang.signes."+s[0],s[1],s[2],{bad:"oui",ok:"non"})).join("")}</div>`;
+  case "a-score": {
+    const sc = macScore(), t = num(A.clin.temp);
+    return `<div class="panel card"><div class="panel-title">Critères cliniques <span class="badge ${sc===null?"calm":sc>=2?"ok":"bad"}">${sc===null?"score en cours":`score ${sc} · ${sc>=2?"TROD indiqué":"pas de TROD"}`}</span></div>
+      ${MAC.map(m=>q("ang.mac."+m[0],m[1],m[0]==="fievre"&&t!==null?`Température mesurée : ${String(t).replace(".",",")} °C`:m[2],{ok:"oui",rerender:true})).join("")}
+      <div class="notice">${(num(S.age)||0)>50?"<b>Âge supérieur à 50 ans :</b> 1 point est retiré automatiquement.":"Âge de 50 ans ou moins : pas de point retiré."}</div></div>
+      ${sc!==null && sc<2 ? `<div class="notice focus" style="align-items:center;flex-wrap:wrap"><div style="flex:1;min-width:220px"><b>Score inférieur à 2 :</b> le protocole recommande un traitement symptomatique sans TROD. Vous pouvez tout de même réaliser le test ; s'il est positif, le patient sera orienté vers un médecin.</div><button class="btn btn-soft" id="btn-forcetrod" type="button">Réaliser le TROD quand même <span class="arr">→</span></button></div>` : ""}`;
+  }
+  case "antecedents": {
+    let out = `<div class="panel card"><div class="panel-title">Allergies et contre-indications aux antibiotiques</div>
+      ${q("ang.peni","Allergie documentée aux pénicillines ?","Exclut l'amoxicilline (1re intention)",{bad:"oui",ok:"non",rerender:true})}
+      ${A.peni==="oui" ? q("ang.ciCeph","Contre-indication aux céphalosporines ?","Allergie grave ou immédiate aux bêta-lactamines",{bad:"oui",ok:"non",rerender:true}) : ""}`;
+    if(A.peni==="oui" && A.ciCeph==="non" && !child) out += `<div class="fields"><div class="field wide"><label for="f-ang-alt">Céphalosporine retenue</label>
+      <select id="f-ang-alt" data-k="ang.alt" data-rr="1"><option value="cefuroxime" ${A.alt==="cefuroxime"?"selected":""}>Céfuroxime axétil 250 mg, 2 fois par jour, 4 jours</option><option value="cefpodoxime" ${A.alt==="cefpodoxime"?"selected":""}>Cefpodoxime proxétil 100 mg, 2 fois par jour, 5 jours</option></select></div></div>`;
+    if(A.peni==="oui" && child) out += `<div class="notice focus"><div><b>Patient de moins de 15 ans allergique :</b> en cas de TROD positif, orientation vers un médecin dans les 24 h.</div></div>`;
+    out += `</div>
+    <div class="panel card"><div class="panel-title">Questions à poser et à reporter dans le compte rendu</div>
+      <div class="fields">
+        ${field("hist.maladies","Maladies ou interventions chirurgicales, actuelles ou passées",{area:true,wide:true})}
+        ${field("hist.allergies","Autres allergies ou intolérances médicamenteuses",{area:true})}
+        ${field("hist.traitements","Traitements prescrits actuellement",{area:true})}
+        ${field("hist.evenement","Événement de santé marquant depuis un an",{area:true})}
+        ${field("hist.autre","Autre point signalé par le patient",{area:true})}
+      </div></div>`;
+    return out;
+  }
+  case "a-trod": {
+    const T = A.trod; let out = "";
+    if(S.circuit==="orientee"){
+      out += `<div class="panel card"><div class="panel-title">Ordonnance de dispensation conditionnelle</div>
+        ${q("ang.ordoOk","Mention « si TROD angine+ », datée de 7 jours au plus ?","Sinon, contacter le médecin : le TROD n'est pas réalisable à l'officine",{bad:"non",ok:"oui",rerender:true})}
+        ${A.ordoOk==="oui" ? `<div class="fields"><div class="field wide"><label for="f-ang-ordoAtb">Antibiotique inscrit sur l'ordonnance</label>
+          <select id="f-ang-ordoAtb" data-k="ang.ordoAtb" data-rr="1">${Object.entries(ATB_A).map(([k,a])=>`<option value="${k}" ${A.ordoAtb===k?"selected":""}>${a.name}</option>`).join("")}</select></div></div>` : ""}</div>`;
+      if(A.ordoOk!=="oui") return out;
+    }
+    out += `<div class="panel card">${q("ang.trod.accord","Accord du patient ou de son représentant légal ?","",{bad:"non",ok:"oui",rerender:true})}</div>`;
+    if(T.accord==="oui"){
+      out += `<div class="notice calm"><div><b>Réalisation</b><ol>
+        <li>Patient assis, tête légèrement en arrière, bouche grande ouverte ; abaisse-langue si besoin.</li>
+        <li>Écouvillonner les deux amygdales et le pharynx postérieur, sans toucher la langue ni les joues.</li>
+        <li>Suivre la notice du test et lire le résultat au temps indiqué par le fabricant.</li></ol></div></div>
+      <div class="panel card">${q("ang.trod.realisable","Test réalisable et interprétable ?","",{bad:"non",ok:"oui",rerender:true})}</div>`;
+      if(T.realisable==="oui") out += `<div class="panel card"><div class="panel-title">Lecture</div>
+        ${q("ang.trod.result","Streptocoque A","",{ok:"neg",bad:"pos",rerender:true},[["pos","Positif"],["neg","Négatif"]])}</div>`;
+    }
+    return out;
+  }
+  }
+  return "";
+}
+function missingForA(id){
+  const A = S.ang, m = [], child = childA();
+  if(id==="patiente"){
+    if(!S.nom.trim()) m.push("nom"); if(!S.prenom.trim()) m.push("prénom");
+    if(num(S.age)===null) m.push("âge"); if(S.consent==null) m.push("consentement");
+    if(child && S.circuit==="spontanee" && num(A.poids)===null) m.push("poids (moins de 15 ans)");
+  }
+  if(id==="a-symptomes" && A.odyno==null) m.push("motif");
+  if(id==="a-urgence" && URG_A.filter(u=>u[0]!=="digestif"||child).some(u=>A.urg[u[0]]==null)) m.push("toutes les questions");
+  if(id==="a-exclusion" && EXCL_A.filter(e=>e[0]!=="eruption"||child).some(e=>A.excl[e[0]]==null)) m.push("tous les critères");
+  if(id==="a-examen" && SIGNES_A.some(s=>A.signes[s[0]]==null)) m.push("les 4 signes d'examen");
+  if(id==="a-score" && macScore()===null) m.push("les 4 critères du score");
+  if(id==="antecedents" && S.circuit==="spontanee"){ if(A.peni==null) m.push("allergie aux pénicillines"); else if(A.peni==="oui" && A.ciCeph==null) m.push("contre-indication aux céphalosporines"); }
+  if(id==="a-trod"){
+    if(S.circuit==="orientee" && A.ordoOk==null) m.push("ordonnance");
+    else if(!(S.circuit==="orientee" && A.ordoOk==="non")){
+      const T = A.trod;
+      if(T.accord==null) m.push("accord du patient");
+      else if(T.accord==="oui"){ if(T.realisable==null) m.push("interprétabilité du test"); else if(T.realisable==="oui" && T.result==null) m.push("résultat du test"); }
+    }
+  }
+  return m;
+}
+
+/* ---------- décision ---------- */
+function decideA(){
+  const A = S.ang, T = A.trod;
+  const R = (code,o={}) => Object.assign({code, reasons:[], items:{1:[],2:[],3:null,4:[]}, buDone:false, hematurie:false}, o);
+  const age = num(S.age), child = childA();
+  if(age===null || !S.nom.trim() || !S.prenom.trim() || S.consent==null) return R("incomplet",{stage:"patiente"});
+
+  if(S.circuit==="orientee"){
+    if(age<3) return R("a_contact",{reasons:["Patient de moins de 3 ans"]});
+    if(S.consent==="non") return R("a_contact",{reasons:["Consentement non recueilli"]});
+    if(A.ordoOk==null) return R("incomplet",{stage:"a-trod"});
+    if(A.ordoOk==="non") return R("a_contact",{reasons:["Ordonnance conditionnelle absente ou datant de plus de 7 jours"]});
+    if(T.accord==null) return R("incomplet",{stage:"a-trod"});
+    if(T.accord==="non") return R("a_contact",{reasons:["Le patient refuse le TROD"]});
+    if(T.realisable==null) return R("incomplet",{stage:"a-trod"});
+    if(T.realisable==="non") return R("a_contact",{reasons:["TROD non réalisable ou non interprétable"], buDone:true, pee:10});
+    if(T.result==null) return R("incomplet",{stage:"a-trod"});
+    return T.result==="pos" ? R("a_ordo_pos",{atb:A.ordoAtb, buDone:true, pee:10}) : R("a_ordo_neg",{buDone:true, pee:10});
+  }
+
+  if(age<10){ const r = R("medecin",{reasons:["Patient de moins de 10 ans"]}); r.items[1].push("age"); return r; }
+  if(S.consent==="non") return R("medecin",{reasons:["Consentement au partage des informations non recueilli"]});
+  if(child && num(A.poids)===null) return R("incomplet",{stage:"patiente"});
+  if(A.odyno==null) return R("incomplet",{stage:"a-symptomes"});
+  if(A.odyno==="non") return R("medecin",{reasons:["Pas de mal de gorge à la déglutition : hors protocole angine"]});
+
+  const urg = URG_A.filter(u=>u[0]!=="digestif"||child);
+  const urgYes = urg.filter(u=>A.urg[u[0]]==="oui");
+  if(urgYes.length){ const r = R("urgence",{reasons:urgYes.map(u=>u[1])}); r.items[2] = urgYes.map(u=>u[0]); return r; }
+  if(urg.some(u=>A.urg[u[0]]==null)) return R("incomplet",{stage:"a-urgence"});
+
+  const ex = EXCL_A.filter(e=>e[0]!=="eruption"||child);
+  const exYes = ex.filter(e=>A.excl[e[0]]==="oui");
+  if(exYes.length){ const r = R("medecin",{reasons:exYes.map(e=>e[1])}); r.items[1] = exYes.map(e=>e[0]); return r; }
+  if(ex.some(e=>A.excl[e[0]]==null)) return R("incomplet",{stage:"a-exclusion"});
+
+  const badV = VITALS_A.map(v=>({v, n:num(A.clin[v[0]])})).filter(x=>x.n!==null && x.v[3](x.n));
+  const sigYes = SIGNES_A.filter(s=>A.signes[s[0]]==="oui");
+  if(badV.length || sigYes.length){
+    const r = R("urgence",{reasons:[...badV.map(x=>`${x.v[1]} : ${String(x.n).replace(".",",")} ${x.v[2]}`), ...sigYes.map(s=>s[1])]});
+    if(badV.some(x=>x.v[0]==="temp")) r.items[2].push("fievre");
+    if(badV.some(x=>x.v[0]!=="temp")) r.items[2].push("constantes");
+    if(sigYes.length) r.items[2].push("local");
+    return r;
+  }
+  if(SIGNES_A.some(s=>A.signes[s[0]]==null)) return R("incomplet",{stage:"a-examen"});
+
+  if(!child){
+    const sc = macScore();
+    if(sc===null) return R("incomplet",{stage:"a-score"});
+    if(sc<2 && !A.forceTrod) return R("a_sympto",{reasons:[`Score de Mac Isaac à ${sc}`], score:sc});
+  }
+
+  if(A.peni==null || (A.peni==="oui" && A.ciCeph==null)) return R("incomplet",{stage:"antecedents"});
+
+  if(T.accord==null) return R("incomplet",{stage:"a-trod"});
+  if(T.accord==="non"){ const r = R("medecin",{reasons:["Le patient refuse le TROD"]}); r.items[4].push("refus"); return r; }
+  if(T.realisable==null) return R("incomplet",{stage:"a-trod"});
+  if(T.realisable==="non"){ const r = R("medecin",{reasons:["TROD non réalisable ou non interprétable"], buDone:true, pee:10}); r.items[4].push("ininterp"); return r; }
+  if(T.result==null) return R("incomplet",{stage:"a-trod"});
+  if(T.result==="neg") return R("a_neg",{buDone:true, pee:10, score:macScore()});
+
+  if(!child && macScore()<2){ const r = R("medecin",{reasons:["TROD positif alors que le score de Mac Isaac est inférieur à 2 : hors protocole, avis médical"], buDone:true, pee:10}); r.items[4].push("horsscore"); return r; }
+  let atb = "amox";
+  if(A.peni==="oui"){
+    if(child){ const r = R("medecin",{reasons:["TROD positif mais allergie aux pénicillines chez un patient de moins de 15 ans"], buDone:true, pee:10}); r.items[4].push("allergie"); return r; }
+    atb = A.ciCeph==="oui" ? "clarithro" : (A.alt||"cefuroxime");
+  }
+  const r = R("a_"+atb,{atb, buDone:true, pee:15, score:macScore()}); r.items[3] = atb; return r;
+}
+function stopStepA(){
+  const d = decideA(); if(d.code==="incomplet") return d.stage;
+  const A = S.ang, age = num(S.age), child = childA();
+  if(S.circuit==="orientee") return (age<3||S.consent==="non") ? "patiente" : "a-trod";
+  if(age<10 || S.consent==="non") return "patiente";
+  if(A.odyno==="non") return "a-symptomes";
+  if(URG_A.some(u=>A.urg[u[0]]==="oui")) return "a-urgence";
+  if(EXCL_A.some(e=>A.excl[e[0]]==="oui")) return "a-exclusion";
+  if(SIGNES_A.some(s=>A.signes[s[0]]==="oui") || VITALS_A.some(v=>{const n=num(A.clin[v[0]]);return n!==null&&v[3](n);})) return "a-examen";
+  if(!child && d.code==="a_sympto") return "a-score";
+  return "a-trod";
+}
+
+/* ---------- textes du résultat ---------- */
+function heroMetricA(d){
+  const r = d.atb ? rxA(d.atb) : null;
+  const m = {a_amox:[6,"jours",r&&`${r.per} matin et soir`], a_cefuroxime:[4,"jours","250 mg matin et soir"], a_cefpodoxime:[5,"jours","100 mg matin et soir"], a_clarithro:[5,"jours","250 mg matin et soir"],
+    medecin:[24,"h","consultation médicale"], a_contact:[24,"h","contacter le prescripteur"], a_neg:[0,"ATB","traitement symptomatique"], a_sympto:[0,"ATB","traitement symptomatique"],
+    a_ordo_neg:[0,"ATB","pas de dispensation"], a_ordo_pos:[1,"ATB","selon l'ordonnance"]}[d.code];
+  if(!m) return "";
+  return `<div class="hero-metric"><b><span class="count" data-to="${m[0]}">0</span><sup>${m[1]}</sup></b><span>${m[2]||""}</span></div>`;
+}
+function decisionTagA(d){
+  const sc = macScore(), T = S.ang.trod;
+  const parts = [];
+  if(S.circuit==="spontanee") parts.push(childA() ? "moins de 15 ans · score non requis" : `Mac Isaac ${sc===null?"—":sc}`);
+  if(d.buDone) parts.push(T.realisable==="non" ? "TROD non interprétable" : `TROD ${T.result==="pos"?"+":"−"}`);
+  else parts.push("TROD non réalisé");
+  return parts.join(" · ");
+}
+function heroSubA(d){
+  const r = d.atb ? rxA(d.atb) : null;
+  switch(d.code){
+    case "urgence": return "Adresser le patient à un médecin en urgence ou vers une structure d'urgence. Motif : "+esc(d.reasons.join(" · "));
+    case "medecin": return "La prise en charge à l'officine n'est pas possible. Motif : "+esc(d.reasons.join(" · "));
+    case "a_contact": return "Contacter le médecin prescripteur. Motif : "+esc(d.reasons.join(" · "));
+    case "a_sympto": return "Score inférieur à 2 : pas de TROD. Traitement symptomatique local et paracétamol ; consultation si pas d'amélioration en 3 jours.";
+    case "a_neg": return "Angine probablement virale : pas d'antibiotique. Traitement symptomatique local et paracétamol ; consultation si pas d'amélioration en 3 jours.";
+    case "a_ordo_pos": return `Délivrer ${esc(ATB_A[d.atb]?.name||"l'antibiotique")} en regard de la mention « si TROD angine+ ».`;
+    case "a_ordo_neg": return "Ne pas délivrer l'antibiotique conditionnel. Délivrer le reste de l'ordonnance et informer le prescripteur.";
+  }
+  if(r) return `${esc(r.per)} matin et soir pendant ${r.days} jours · ${esc(r.daily)}.`;
+  return "";
+}
+function pharmacistTodoA(d){
+  const t = [], med = S.medecin.trim() ? esc(S.medecin.trim()) : "le médecin traitant", r = d.atb ? rxA(d.atb) : null;
+  if(d.code==="urgence") t.push("Orienter immédiatement vers un médecin ou une structure d'urgence. Appeler le 15 si l'état le justifie.");
+  if(d.code==="medecin") t.push(`Orienter vers ${med} pour une consultation dans les 24 h.`);
+  if(d.code==="a_contact") t.push(`Contacter ${med} : la réalisation du TROD ou la dispensation n'est pas possible.`);
+  if(r && d.code.startsWith("a_") && d.code!=="a_ordo_pos") {
+    t.push(`Délivrer <b>${esc(r.name)}</b> : ${esc(r.per)} matin et soir pendant ${r.days} jours (${r.days*2} prises).`);
+    t.push("Compléter le bon de prise en charge (amelipro) et le joindre à la facture, votre n° d'identification en zones prescripteur et exécutant.");
+    t.push("Remettre au patient l'attestation : nom du médicament, posologie et durée (fiche patient).");
+  }
+  if(d.code==="a_ordo_pos") t.push(`Délivrer ${esc(ATB_A[d.atb]?.name||"l'antibiotique prescrit")} en regard de la mention « si TROD angine+ » et le reste de l'ordonnance.`);
+  if(d.code==="a_ordo_neg") t.push("Ne pas délivrer l'antibiotique conditionnel ; délivrer le reste de l'ordonnance et informer le prescripteur.");
+  if(d.code==="a_neg" || d.code==="a_sympto") t.push("Conseiller un traitement symptomatique local et du paracétamol ; consultation si pas d'amélioration dans les 3 jours.");
+  if(d.buDone) t.push(`Facturer l'acte TRD (${d.pee} € TTC), date d'exécution = date du test.`);
+  t.push("Remettre la fiche patient imprimée et expliquer les signes qui doivent faire reconsulter.");
+  t.push("Enregistrer le compte rendu dans le DMP du patient.");
+  return t;
+}
+function ensureProductsA(d){
+  if(S.products && S._prodFor===d.code) return;
+  if(S.products && S._prodTouched){ S._prodFor = d.code; return; }
+  const treat = ["a_amox","a_cefuroxime","a_cefpodoxime","a_clarithro","a_ordo_pos"].includes(d.code);
+  const def = treat ? ["paracetamol","pastilles","probiotiques","hygiene"]
+    : (["a_neg","a_sympto","a_ordo_neg"].includes(d.code) ? ["paracetamol","pastilles","miel","hygiene"]
+    : (d.code==="urgence" ? [] : ["paracetamol","hygiene"]));
+  S.products = new Set(def); S._prodFor = d.code;
+}
+
+/* ---------- synthèse ---------- */
+function renderSummaryA(){
+  const d = decideA(), o = OUTCOME[d.code], A = S.ang;
+  const age = num(S.age), orient = S.circuit==="orientee", child = childA(), nm = fullName();
+  countTo($("#v-age"), age===null ? "—" : age);
+  $("#v-pat").textContent = age!==null ? "ans"+(nm?" · "+nm:"") : (nm||"à renseigner");
+  $("#v-av").textContent = ((S.prenom.trim()[0]||"")+(S.nom.trim()[0]||"")).toUpperCase() || "?";
+  $("#t-pat").classList.toggle("alert", age!==null && (orient ? age<3 : age<10));
+  ["t-sym","t-urg","t-exc"].forEach(id=>{ $("#"+id).hidden = orient; });
+  const sc = macScore();
+  countTo($("#v-sym"), child ? "—" : (sc===null ? "—" : sc)); setRing("r-sym", child||sc===null ? 0 : Math.max(0,sc)/4);
+  $("#s-sym").textContent = child ? "non requis avant 15 ans" : (sc===null ? "sur 4" : (sc>=2 ? "TROD indiqué" : "pas de TROD"));
+  $("#t-sym").classList.remove("alert");
+  const urgN = URG_A.filter(u=>A.urg[u[0]]==="oui").length + SIGNES_A.filter(s=>A.signes[s[0]]==="oui").length + VITALS_A.filter(v=>{const n=num(A.clin[v[0]]);return n!==null&&v[3](n);}).length;
+  const urgAns = URG_A.some(u=>A.urg[u[0]]!=null) || SIGNES_A.some(s=>A.signes[s[0]]!=null);
+  countTo($("#v-urg"), urgAns ? urgN : "—"); setRing("r-urg", urgN ? 1 : SIGNES_A.filter(s=>A.signes[s[0]]!=null).length/SIGNES_A.length);
+  $("#s-urg").textContent = urgN>1 ? "signes d'alerte" : "signe d'alerte";
+  $("#t-urg").classList.toggle("alert", urgN>0);
+  const ex = EXCL_A.filter(e=>e[0]!=="eruption"||child);
+  const exN = ex.filter(e=>A.excl[e[0]]==="oui").length, exDone = ex.filter(e=>A.excl[e[0]]!=null).length;
+  countTo($("#v-exc"), exDone ? exN : "—"); setRing("r-exc", exN ? 1 : exDone/ex.length);
+  $("#s-exc").textContent = exN ? (exN>1?"critères présents":"critère présent") : `${exDone} sur ${ex.length} vérifiés`;
+  $("#t-exc").classList.toggle("alert", exN>0);
+  const T = A.trod; let v="—", s="en attente";
+  if(T.accord==="non"){ v="×"; s="refusé"; } else if(T.realisable==="non"){ v="?"; s="non interprétable"; } else if(T.result){ v = T.result==="pos"?"+":"−"; s = T.result==="pos"?"positif":"négatif"; }
+  if(d.code==="a_sympto"){ v="0"; s="non indiqué"; }
+  $("#v-bu").textContent = v; $("#s-bu").textContent = s;
+  [...$("#v-bars").children].forEach(i=>i.classList.toggle("pos", T.result==="pos"));
+  $("#t-bu").classList.toggle("alert", T.accord==="non" || T.realisable==="non");
+  const dec = $("#t-dec"), cls = "decision lv-"+o.lv;
+  if(dec.className.replace(" flash","") !== cls){ dec.className = cls; void dec.offsetWidth; dec.classList.add("flash"); }
+  $("#v-dec").textContent = o.label;
+}
+function setTileLabels(a,b){
+  const pz = document.querySelector("#t-pat .tile-h span"); if(pz) pz.textContent = isA() ? "Patient" : "Patiente";
+  const x = document.querySelector("#t-sym .tile-h span"), y = document.querySelector("#t-bu .tile-h span");
+  if(x) x.textContent = a; if(y) y.textContent = b;
+}
+
+/* ---------- documents ---------- */
+const CONSULT_A = [
+  "Fièvre supérieure à 39,5 °C, ou fièvre qui persiste après 3 jours de traitement",
+  "Difficulté à respirer, à avaler sa salive ou à ouvrir la bouche",
+  "Douleur ou raideur du cou qui limite les mouvements de la tête",
+  "Aucune amélioration après 3 jours",
+  "Éruption, démangeaisons, gonflement : signes possibles d'allergie au traitement"
+];
+function rxBlockA(key, fromOrdo){
+  const r = rxA(key);
+  if(!r || fromOrdo) return `<div class="p-rx"><div><small class="p-mono" style="font-size:8pt;color:#B42E14;text-transform:uppercase;letter-spacing:.08em">votre antibiotique</small><div class="p-rx-name">${esc(r ? r.name : "Selon l'ordonnance de votre médecin")}</div><div class="p-rx-dose">Respectez la posologie et la durée indiquées sur l'ordonnance et sur la boîte.</div></div>
+    <ul class="p-rules"><li>Allez jusqu'au bout du traitement, même si vous allez mieux avant.</li></ul></div>`;
+  const days = Array.from({length:r.days},(_,i)=>i+1);
+  return `<div class="p-rx">
+    <div class="p-rx-top"><div><small>votre antibiotique</small><div class="p-rx-name">${esc(r.name)}</div><div class="p-rx-dose">${esc(r.per)} matin et soir · pendant ${r.days} jours</div></div>
+      <div class="p-rx-big"><b>${r.days*2}</b><span>prises en<br>${r.days} jours</span></div></div>
+    <table class="p-grid"><thead><tr><th></th>${days.map(j=>`<th>J${j}</th>`).join("")}</tr></thead><tbody>
+      <tr><td>Matin · ${esc(r.per)}</td>${days.map(()=>`<td><span class="p-box"></span></td>`).join("")}</tr>
+      <tr><td>Soir · ${esc(r.per)}</td>${days.map(()=>`<td><span class="p-box"></span></td>`).join("")}</tr>
+    </tbody></table>
+    <ul class="p-rules">${r.rules.map(x=>`<li>${esc(x)}</li>`).join("")}<li>Allez jusqu'au bout des ${r.days} jours, même si vous allez mieux avant.</li><li>Cochez chaque case au fur et à mesure pour ne pas oublier de prise.</li></ul>
+  </div>`;
+}
+function trodChip(){
+  const T = S.ang.trod; if(T.realisable!=="oui" || !T.result) return "";
+  return `<div class="p-results"><div class="p-res"><i class="${T.result==="pos"?"pos":"neg"}">${T.result==="pos"?"+":"−"}</i>TROD streptocoque A ${T.result==="pos"?"positif":"négatif"}</div></div>`;
+}
+function buildFicheA(d){
+  const name = fullName(), urgent = d.code==="urgence", total = urgent ? 1 : 2;
+  const prods = selectedProducts();
+  const note = S.noteOnFiche==="oui" && S.notes.trim() ? `<div class="p-msg"><b style="display:block;margin-bottom:1mm">Message de votre pharmacien</b>${esc(S.notes.trim())}</div>` : "";
+  const treat = ["a_amox","a_cefuroxime","a_cefpodoxime","a_clarithro","a_ordo_pos"].includes(d.code);
+  const soulager = `<div class="p-card focus"><h2>Pour vous soulager</h2><ul class="p-rules"><li>Paracétamol en cas de fièvre ou de douleur, en respectant les doses (page 2).</li><li>Buvez souvent : eau, boissons tièdes ; pastilles ou miel pour adoucir la gorge.</li><li>Évitez l'ibuprofène et les autres anti-inflammatoires sans avis médical.</li></ul></div>`;
+  let title="", lead="", body="";
+  if(treat){
+    title = "Votre test d'angine est positif";
+    lead = "Le test rapide confirme une angine à streptocoque A. Voici votre antibiotique et comment le prendre.";
+    body = trodChip() + rxBlockA(d.atb, d.code==="a_ordo_pos")
+      + `<div class="p-two"><div class="p-card focus"><h2>Ce qui est normal</h2><ul class="p-rules"><li>La fièvre et la douleur diminuent en 2 à 3 jours.</li><li>Limitez les contacts rapprochés les premiers jours de traitement.</li></ul></div>
+         <div class="p-card alert"><h2>Consultez rapidement si</h2><ul class="p-rules">${CONSULT_A.map(x=>`<li>${x}</li>`).join("")}</ul></div></div>`;
+  } else if(["a_neg","a_ordo_neg","a_sympto"].includes(d.code)){
+    title = d.code==="a_sympto" ? "Votre angine est probablement virale" : "Votre test d'angine est négatif";
+    lead = d.code==="a_sympto" ? "D'après l'examen, le test n'est pas nécessaire : un antibiotique ne vous guérirait pas plus vite. La plupart des angines guérissent seules en quelques jours." : "Le test ne détecte pas de streptocoque A : votre angine est très probablement virale et un antibiotique serait inutile.";
+    body = trodChip() + soulager + `<div class="p-card alert"><h2>Consultez un médecin si</h2><ul class="p-rules">${CONSULT_A.filter((_,i)=>i!==4).map(x=>`<li>${x}</li>`).join("")}</ul></div>`;
+  } else if(urgent){
+    title = "Consultez un médecin dès aujourd'hui";
+    lead = "Certains signes nécessitent un examen médical rapide.";
+    body = `<div class="p-banner urgent"><div class="p-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div><div><b>Rendez-vous chez un médecin ou dans un service d'urgence, sans attendre.</b>En cas de difficulté à respirer, de malaise ou d'aggravation rapide : appelez le 15.</div></div>
+      <div class="p-card"><h2>Pourquoi ?</h2><ul class="p-rules">${d.reasons.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+      <div class="p-card focus"><h2>À montrer au médecin</h2>Présentez cette fiche. Votre pharmacien a enregistré un compte rendu dans votre Dossier Médical Partagé (DMP).</div>
+      <div class="p-card"><h2>En attendant</h2><ul class="p-rules"><li>Buvez régulièrement par petites gorgées.</li><li>Ne prenez pas d'antibiotique ni d'anti-inflammatoire sans avis médical.</li></ul></div>`;
+  } else {
+    title = d.code==="a_contact" ? "Votre médecin doit être recontacté" : "Consultez un médecin dans les 24 heures";
+    lead = "Votre situation nécessite l'avis d'un médecin : la pharmacie ne peut pas prendre en charge cette angine directement.";
+    body = trodChip() + `<div class="p-banner refer"><div class="p-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2C394B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div><b>Prenez rendez-vous${S.medecin.trim()?" avec "+esc(S.medecin.trim()):" avec votre médecin"} dans les 24 heures.</b>Présentez cette fiche lors de la consultation.</div></div>
+      <div class="p-card"><h2>Pourquoi ?</h2><ul class="p-rules">${d.reasons.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+      ${soulager}
+      <div class="p-card alert"><h2>N'attendez pas et consultez en urgence si</h2><ul class="p-rules">${CONSULT_A.slice(0,3).map(x=>`<li>${x}</li>`).join("")}</ul></div>`;
+  }
+  const p1 = `<div class="page">${pageHead("fiche conseil · angine")}
+    <div class="p-title"><small>${name?`Remise à ${esc(name)}`:"Fiche patient"}</small><h1>${title}</h1><p>${lead}</p></div>
+    ${body}${urgent?note:""}${pageFoot(1,total)}</div>`;
+  if(urgent) return p1;
+  const p2 = `<div class="page">${pageHead("guérison · produits conseillés")}
+    <div class="p-card"><h2>Pour guérir et protéger votre entourage</h2><ul class="p-tips">${TIPS_A.map(t=>`<li>${tipSvg(t[0])}<span><b>${t[1]}</b>${t[2]?` · ${t[2]}`:""}</span></li>`).join("")}</ul></div>
+    ${prods.length?`<div><h2 style="margin:0 0 2mm;font-size:12pt">Produits conseillés par votre pharmacien</h2>
+      <table class="p-prod"><thead><tr><th>Produit</th><th>Comment l'utiliser</th></tr></thead><tbody>
+      ${prods.map(p=>`<tr><td><b>${esc(p.name)}</b><span>${esc(p.role)}</span></td><td>${esc(p.poso)}</td></tr>`).join("")}
+      </tbody></table></div>`:""}
+    ${note}
+    <div class="p-card focus" style="font-size:9.2pt">Ces produits soulagent les symptômes mais ne remplacent pas un antibiotique lorsqu'il est nécessaire. En cas de doute, demandez conseil à votre pharmacien ou à votre médecin.</div>
+    ${pageFoot(2,2)}</div>`;
+  return p1+p2;
+}
+function buildCRA(d){
+  const on = b => b ? "on" : "";
+  const it = (c,l) => `<div class="cr-it ${on(c)}"><span class="cbx ${on(c)}"></span><span>${l}</span></div>`;
+  const blk = (n,c,title,inner,cls="") => `<div class="cr-block"><div class="cr-block-h ${on(c)}"><span class="cr-num">${n}</span><span class="cbx ${on(c)}"></span>${title}</div><div class="cr-items ${cls}">${inner}</div></div>`;
+  const A = S.ang, T = A.trod, i1 = d.items[1], i2 = d.items[2], i4 = d.items[4];
+  const has1 = i1.length>0 || (d.code==="medecin" && !i4.length), has2 = d.code==="urgence", has3 = !!d.items[3], has4 = i4.length>0;
+  const EX = [["age","Patient de moins de 10 ans"], ...EXCL_A.map(e=>[e[0], e[1]+(e[2]?` (${e[2]})`:"")])];
+  const yn = v => v==null ? "—" : v==="oui" ? "Oui" : "Non";
+  const r3 = k => { const r = rxA(k); return `${r.name} ${r.per}, 2 fois par jour pendant ${r.days} jours`; };
+  const sc = macScore(), prods = selectedProducts();
+  const page1 = `<div class="page">${pageHead("compte rendu · DMP")}
+    <div class="p-title"><h1 style="font-size:17pt">Compte rendu : prise en charge à l'officine de l'angine</h1>
+      <p style="font-size:9.2pt">Circuit : ${S.circuit==="orientee"?"patient orienté avec ordonnance de dispensation conditionnelle « si TROD angine+ »":"patient se présentant spontanément à l'officine"} · ${esc(dateShort)}</p></div>
+    <div class="cr-id">
+      <div><small>Nom</small><b>${esc(S.nom.toUpperCase()||"—")}</b></div>
+      <div><small>Prénom</small><b>${esc(S.prenom||"—")}</b></div>
+      <div><small>Âge · poids</small><b>${S.age!==""?esc(S.age)+" ans":"—"}${num(A.poids)!==null?" · "+esc(A.poids)+" kg":""}</b></div>
+      <div><small>N° de sécurité sociale</small><b class="p-mono" style="font-size:8.6pt">${esc(S.nir||"—")}</b></div>
+      <div><small>Médecin traitant</small><b>${esc(S.medecin||"—")}</b></div>
+      <div><small>Consentement</small><b>${yn(S.consent)}</b></div>
+    </div>
+    ${["a_neg","a_sympto","a_ordo_pos","a_ordo_neg","a_contact"].includes(d.code) ? `<div class="cr-block"><div class="cr-block-h on"><span class="cbx on"></span>${esc(OUTCOME[d.code].label)}${d.reasons.length?" · "+esc(d.reasons.join(" · ")):""}${["a_neg","a_sympto"].includes(d.code)?" · traitement symptomatique local et paracétamol, consultation si pas d'amélioration en 3 jours":""}</div></div>` : ""}
+    ${blk(1,has1,"Je lui ai conseillé de consulter son médecin dans les 24 h (critère ne permettant pas la prise en charge à l'officine)", EX.map(e=>it(i1.includes(e[0]),esc(e[1]))).join("") + (has1 && !i1.length ? it(true,esc(d.reasons.join(" · "))) : ""))}
+    ${blk(2,has2,"Je l'ai adressé à un médecin en urgence (critère d'urgence ou signe de gravité)", [
+      it(i2.includes("fievre"),"Fièvre > 39,5 °C rapportée ou mesurée"),
+      it(i2.includes("digestif"),"Troubles digestifs importants chez l'enfant"),
+      it(i2.includes("constantes"),"PAS < 90 mmHg, FC > 110/min ou FR > 20/min"),
+      it(i2.includes("local"),"Dyspnée, trismus, hypersialorrhée, torticolis")].join(""))}
+    ${blk(3,has3,"Je lui ai délivré un antibiotique conforme aux recommandations (TROD positif)", Object.keys(ATB_A).map(k=>it(d.items[3]===k, esc(r3(k)))).join(""))}
+    ${blk(4,has4,"Je lui ai conseillé de consulter un médecin dans les 24 h", it(i4.includes("ininterp"),"TROD non réalisable ou non interprétable") + it(i4.includes("refus"),"Refus du TROD") + it(i4.includes("allergie"),"TROD positif et allergie aux antibiotiques préconisés") + it(i4.includes("horsscore"),"TROD positif avec un score de Mac Isaac inférieur à 2"))}
+    ${pageFoot(1,2,`Compte rendu généré le ${esc(dateFR)} · à enregistrer dans le DMP du patient`)}</div>`;
+  const vit = VITALS_A.map(v=>`${v[1]} : <b>${A.clin[v[0]]!==""?esc(String(A.clin[v[0]]).replace(".",","))+" "+v[2]:"non mesuré"}</b>`).join(" · ");
+  const page2 = `<div class="page">${pageHead("compte rendu · détails")}
+    <div><h2 class="cr-h">Interrogatoire, examen et test</h2>
+    <table class="cr-table">
+      ${S.circuit==="spontanee"?`<tr><th>Mal de gorge à la déglutition</th><td>${yn(A.odyno)}</td></tr>
+      <tr><th>Critères d'urgence</th><td>${URG_A.filter(u=>u[0]!=="digestif"||childA()).map(u=>`${esc(u[1])} : ${yn(A.urg[u[0]])}`).join(" · ")}</td></tr>
+      <tr><th>Constantes</th><td>${vit}</td></tr>
+      <tr><th>Examen endobuccal</th><td>${SIGNES_A.map(s=>`${esc(s[1])} : ${yn(A.signes[s[0]])}`).join(" · ")}</td></tr>
+      <tr><th>Score de Mac Isaac</th><td>${childA()?"Non requis (moins de 15 ans)":`${MAC.map(m=>`${esc(m[1])} : ${yn(A.mac[m[0]])}`).join(" · ")}${(num(S.age)||0)>50?" · âge > 50 ans : −1":""} · <b>score ${sc===null?"—":sc}</b>`}</td></tr>
+      <tr><th>Allergie pénicillines / CI céphalosporines</th><td>${yn(A.peni)}${A.peni==="oui"?" / "+yn(A.ciCeph):""}</td></tr>`
+      :`<tr><th>Ordonnance « si TROD angine+ » de 7 jours au plus</th><td>${yn(A.ordoOk)} · ${esc(ATB_A[A.ordoAtb]?.name||"")} · ${d.code==="a_ordo_pos"?"délivré":"non délivré"}</td></tr>`}
+      <tr><th>TROD angine</th><td>${T.accord==="non"?"Refusé":T.accord==null?"Non réalisé":T.realisable==="non"?"Non interprétable":T.result?`<b>${T.result==="pos"?"Positif":"Négatif"}</b>`:"—"}</td></tr>
+      <tr><th>Décision</th><td><b>${esc(OUTCOME[d.code].label)}</b>${d.reasons.length?" · "+esc(d.reasons.join(" · ")):""}</td></tr>
+    </table></div>
+    <div><h2 class="cr-h">Questions complémentaires</h2>
+    <table class="cr-table">
+      <tr><th>Maladies ou interventions chirurgicales</th><td>${esc(S.hist.maladies)||"—"}</td></tr>
+      <tr><th>Allergies ou intolérances médicamenteuses</th><td>${esc(S.hist.allergies)||"—"}</td></tr>
+      <tr><th>Traitements en cours</th><td>${esc(S.hist.traitements)||"—"}</td></tr>
+      <tr><th>Événement de santé marquant depuis un an</th><td>${esc(S.hist.evenement)||"—"}</td></tr>
+      <tr><th>Autre point signalé</th><td>${esc(S.hist.autre)||"—"}</td></tr>
+    </table></div>
+    <div><h2 class="cr-h">Conseils et produits remis</h2>
+    <table class="cr-table"><tr><th>Fiche patient</th><td>Remise (posologie, conseils et signes devant faire consulter)</td></tr>
+      <tr><th>Produits conseillés</th><td>${prods.length?prods.map(p=>esc(p.name)).join(", "):"Aucun"}</td></tr>
+      ${d.buDone?`<tr><th>Facturation</th><td>Acte TRD · ${d.pee} € TTC</td></tr>`:""}
+    </table></div>
+    <div class="p-msg" style="min-height:16mm"><b style="display:block;margin-bottom:1mm">Points divers</b>${esc(S.notes.trim())||""}</div>
+    <div style="display:flex;justify-content:space-between;gap:6mm;align-items:flex-end">
+      <div style="font-size:9pt"><b>${esc(P.pharmacien||"Pharmacien")}</b><br><span style="color:#56636F">${esc(P.nom||"")}${P.rpps?" · RPPS "+esc(P.rpps):""}</span></div>
+      <div class="p-sign">Signature et cachet</div>
+    </div>
+    ${pageFoot(2,2,`Compte rendu généré le ${esc(dateFR)} · à enregistrer dans le DMP du patient`)}</div>`;
+  return page1+page2;
+}
+
+function homeHTML(){
+  const card = (p, num, ic, title, meta, facts) => `<button class="proto-card" type="button" data-proto="${p}" aria-label="Commencer le protocole ${title}">
+      <div class="proto-top"><div class="proto-ic">${ic}</div><span class="proto-num">${num}</span></div>
+      <div><h3>${title}</h3><p class="proto-meta">${meta}</p></div>
+      <ul class="proto-facts">${facts.map(f=>`<li><span><small>${f[0]}</small>${f[1]}</span></li>`).join("")}</ul>
+      <span class="proto-go">Commencer le protocole ${title.toLowerCase()} <span class="arr">→</span></span>
+    </button>`;
+  const icC = `<svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2.8c3.6 4.5 6.2 7.9 6.2 11.3a6.2 6.2 0 1 1-12.4 0c0-3.4 2.6-6.8 6.2-11.3Z"/><path d="M9.3 14.6a2.7 2.7 0 0 0 2.7 2.7"/></svg>`;
+  const icA = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="15.5" r="2.4"/><circle cx="9.4" cy="12" r="2.4"/><circle cx="14.3" cy="10.2" r="2.4"/><circle cx="19.2" cy="11.2" r="2.4"/></svg>`;
+  return `<div class="home-hero"><span class="tag">Dépistage à l'officine</span><h2>Quel dépistage réalisez-vous ?</h2><p>Choisissez le protocole : le questionnaire, le résultat et les documents à remettre s'adaptent automatiquement.</p></div>
+    <div class="proto-grid">
+      ${card("cystite","Protocole 1",icC,"Cystite","Infection urinaire simple de la femme",[["Patiente","Femme de 16 à 65 ans, symptômes urinaires récents"],["Test","Bandelette urinaire : leucocytes et nitrites"],["Si le test est positif","Fosfomycine 3 g ou pivmécillinam 3 jours"],["Facturation","PEE · 10 € ou 15 €"]])}
+      ${card("angine","Protocole 2",icA,"Angine","Angine à streptocoque A",[["Patient","Dès 10 ans, ou dès 3 ans avec ordonnance conditionnelle"],["Test","Score de Mac Isaac puis TROD streptocoque A"],["Si le test est positif","Amoxicilline 6 jours ou alternative en cas d'allergie"],["Facturation","TRD · 10 € ou 15 €"]])}
+    </div>
+    <p class="home-note">Aucune donnée patient n'est enregistrée : tout reste dans ce navigateur.</p>`;
+}
+function chooseProto(p){
+  if(S.proto!==p){ S.proto = p; S.products = null; S._prodTouched = false; S._prodFor = null; docTab = "fiche"; visited = new Set(["patiente"]); }
+  go("patiente");
+}
 function render(focusId){
+  updateBrand();
+  if(cur==="accueil"){ document.body.classList.add("home"); $("#main").innerHTML = homeHTML(); return; }
+  document.body.classList.remove("home");
   const steps = active();
   if(!steps.some(s=>s.id===cur)) cur = "patiente";
-  const st = STEPS.find(s=>s.id===cur);
+  const st = curSteps().find(s=>s.id===cur);
   const idx = steps.findIndex(s=>s.id===cur);
   const missing = cur==="resultat" ? [] : missingFor(cur);
   const d = decide();
@@ -914,14 +1616,15 @@ function render(focusId){
   $("#main").innerHTML = `
     <div class="step-head"><span class="tag" style="align-self:flex-start">${esc(st.tag)}</span><h2>${esc(st.title)}</h2><p>${esc(st.intro)}</p></div>
     ${stepBody(cur)}
-    ${ends && d.code!=="negatif" && !["fosfo","pivme","ordo_pos","ordo_neg"].includes(d.code) ? `<div class="notice ${OUTCOME[d.code].lv==="urgent"?"bad":"focus"}"><div><b>${esc(OUTCOME[d.code].label)}.</b> ${esc(d.reasons.join(" · "))}. Le questionnaire s'arrête ici : passez au résultat pour éditer les documents.</div></div>`:""}
+    ${ends && d.code!=="negatif" && !["fosfo","pivme","ordo_pos","ordo_neg","a_sympto"].includes(d.code) ? `<div class="notice ${OUTCOME[d.code].lv==="urgent"?"bad":"focus"}"><div><b>${esc(OUTCOME[d.code].label)}.</b> ${esc(d.reasons.join(" · "))}. Le questionnaire s'arrête ici : passez au résultat pour éditer les documents.</div></div>`:""}
     ${cur!=="resultat" ? `<div class="nav">
-      <button class="btn btn-ghost" id="btn-prev" type="button" ${idx===0?"hidden":""}>← Précédent</button>
+      <button class="btn btn-ghost" id="btn-prev" type="button">${idx===0?"← Choix du protocole":"← Précédent"}</button>
       <span id="missing-slot"></span>
-      <button class="btn btn-dark" id="btn-next" type="button">${ends?"Voir le résultat":"Continuer"} →</button>
+      <button class="btn btn-dark" id="btn-next" type="button">${ends?"Voir le résultat":"Continuer"} <span class="arr">→</span></button>
     </div>` : `<div class="nav"><button class="btn btn-ghost" id="btn-prev" type="button">← Modifier les réponses</button></div>`}`;
   renderRail(); renderSummary();
   if(cur==="resultat" && d.code!=="incomplet") renderDocs();
+  document.querySelectorAll(".hero-metric .count").forEach(el=>{ el.dataset.v = 0; countTo(el, +el.dataset.to); });
   if(focusId){ const el=document.getElementById(focusId); if(el) el.focus({preventScroll:true}); }
 }
 
@@ -933,37 +1636,93 @@ function renderRail(){
     return `<li><button type="button" data-go="${s.id}" class="${s.id===cur?"on":""} ${done?"done":""}" ${visited.has(s.id)?"":"disabled"} aria-current="${s.id===cur?"step":"false"}"><span class="dot">${done?"✓":i+1}</span><span class="lbl">${esc(s.label)}</span></button></li>`;
   }).join("");
   const pct = Math.round((curIdx)/(steps.length-1)*100);
-  $("#dial-num").textContent = pct+"%";
-  $("#dial-arc").style.strokeDashoffset = 339.3*(1-pct/100);
+  countTo($("#dial-num"), pct);
+  $("#dial-step").textContent = `étape ${curIdx+1} sur ${steps.length}`;
+  $("#dial-arc").style.strokeDashoffset = 464.96*(1-pct/100);
   $("#dial-knob").style.transform = `rotate(${pct*3.6}deg)`;
+  document.querySelectorAll("#ticks line").forEach((t,i,all)=>t.classList.toggle("on", i < Math.round(pct/100*all.length)));
 }
 
+const IC = {
+  user:`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4.2"/><path d="M4 20.5c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5z"/></svg>`,
+  flame:`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 3.5 5 5.8 5 11a5 5 0 0 1-10 0c0-2.4 1-4 2.4-5.4.2 1.8 1 3 2.3 3.6C11 8.5 11 5 12 2z"/></svg>`,
+  alert:`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10.3 3.9a2 2 0 0 1 3.4 0l8.4 14.1a2 2 0 0 1-1.7 3H3.6a2 2 0 0 1-1.7-3z"/><path d="M12 9v4.5M12 17h.01" stroke="var(--tile)" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+  shield:`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5 4 5.5v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10v-6z"/></svg>`,
+  drop:`<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5c3.8 4.7 6.5 8.3 6.5 11.8a6.5 6.5 0 1 1-13 0c0-3.5 2.7-7.1 6.5-11.8z"/></svg>`
+};
+const DONUT_C = 2*Math.PI*15;
+const donut = id => `<svg class="donut" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" class="d-track"/><circle id="${id}" cx="18" cy="18" r="15" class="d-val" stroke-dasharray="${DONUT_C.toFixed(2)}" stroke-dashoffset="${DONUT_C.toFixed(2)}" transform="rotate(-90 18 18)"/></svg>`;
+function countTo(el, target){
+  if(!el) return;
+  const from = parseFloat(el.dataset.v ?? el.textContent) || 0;
+  el.dataset.v = target;
+  if(isNaN(target)) { el.textContent = target; return; }
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches || from===target){ el.textContent = target; return; }
+  const t0 = performance.now(), dur = 650;
+  cancelAnimationFrame(el._raf);
+  const step = t => { const k = Math.min(1,(t-t0)/dur), e = 1-Math.pow(1-k,3); el.textContent = Math.round(from+(target-from)*e); if(k<1) el._raf = requestAnimationFrame(step); };
+  el._raf = requestAnimationFrame(step);
+}
+function setRing(id, ratio){ const el=document.getElementById(id); if(el) el.style.strokeDashoffset = DONUT_C*(1-Math.max(0,Math.min(1,ratio))); }
+function initSummary(){
+  $("#summary").innerHTML = `
+    <div class="tile wide" id="t-pat"><div class="tile-h">${IC.user}<span>Patiente</span></div>
+      <div class="tile-b"><div><b class="num" id="v-age">—</b><small id="v-pat">à renseigner</small></div><div class="avatar" id="v-av">?</div></div></div>
+    <div class="tile" id="t-sym"><div class="tile-h">${IC.flame}<span>Symptômes</span></div>
+      <div class="tile-b"><div><b class="num" id="v-sym">—</b><small id="s-sym">sur 4</small></div>${donut("r-sym")}</div></div>
+    <div class="tile" id="t-urg"><div class="tile-h">${IC.alert}<span>Gravité</span></div>
+      <div class="tile-b"><div><b class="num" id="v-urg">—</b><small id="s-urg">signe d'alerte</small></div>${donut("r-urg")}</div></div>
+    <div class="tile" id="t-exc"><div class="tile-h">${IC.shield}<span>Exclusions</span></div>
+      <div class="tile-b"><div><b class="num" id="v-exc">—</b><small id="s-exc">sur 12</small></div>${donut("r-exc")}</div></div>
+    <div class="tile" id="t-bu"><div class="tile-h">${IC.drop}<span>Bandelette</span></div>
+      <div class="tile-b"><div><b class="num" id="v-bu">—</b><small id="s-bu">en attente</small></div><div class="bars" id="v-bars" aria-hidden="true"><i></i><i></i><i></i></div></div></div>
+    <div class="decision lv-pending" id="t-dec"><small>Décision</small><strong id="v-dec">—</strong></div>`;
+  $("#summary").dataset.ready = "1";
+}
 function renderSummary(){
-  const d = decide();
-  const o = OUTCOME[d.code];
+  if(!$("#summary").dataset.ready) initSummary();
+  setTileLabels(isA()?"Mac Isaac":"Symptômes", isA()?"TROD":"Bandelette");
+  if(isA()) return renderSummaryA();
+  const d = decide(), o = OUTCOME[d.code];
   const age = num(S.age);
+  const orient = S.circuit==="orientee";
+  // patiente
+  countTo($("#v-age"), age===null ? "—" : age);
+  const nm = fullName();
+  $("#v-pat").textContent = age!==null ? "ans"+(nm?" · "+nm:"") : (nm||"à renseigner");
+  $("#v-av").textContent = ((S.prenom.trim()[0]||"")+(S.nom.trim()[0]||"")).toUpperCase() || "?";
+  $("#t-pat").classList.toggle("alert", age!==null && !orient && (age<16||age>65));
+  // symptômes / gravité / exclusions (circuit spontané)
+  ["t-sym","t-urg","t-exc"].forEach(id=>{ $("#"+id).hidden = orient; });
   const symN = SYMPT.filter(s=>S.sympt[s[0]]==="oui").length;
   const symAns = Object.values(S.sympt).some(v=>v!=null);
+  countTo($("#v-sym"), symAns ? symN : "—"); setRing("r-sym", symN/4);
+  $("#s-sym").textContent = S.sympt.recent==="non" ? "non récents" : "sur 4";
+  $("#t-sym").classList.toggle("alert", symAns && (Object.values(S.sympt).every(v=>v!=null) && (!symN || S.sympt.recent==="non")));
   const urgN = URG.filter(u=>S.urg[u[0]]==="oui").length + VITALS.filter(v=>{const n=num(S.clin[v[0]]);return n!==null&&v[4](n);}).length;
   const urgAns = URG.some(u=>S.urg[u[0]]!=null) || VITALS.some(v=>num(S.clin[v[0]])!==null);
+  countTo($("#v-urg"), urgAns ? urgN : "—"); setRing("r-urg", urgN ? 1 : URG.filter(u=>S.urg[u[0]]!=null).length/URG.length);
+  $("#s-urg").textContent = urgN>1 ? "signes d'alerte" : "signe d'alerte";
+  $("#t-urg").classList.toggle("alert", urgN>0);
   const exN = EXCL.filter(e=>S.excl[e[0]]==="oui").length;
-  const exAns = EXCL.some(e=>S.excl[e[0]]!=null);
+  const exDone = EXCL.filter(e=>S.excl[e[0]]!=null).length;
+  countTo($("#v-exc"), exDone ? exN : "—"); setRing("r-exc", exN ? 1 : exDone/EXCL.length);
+  $("#s-exc").textContent = exN ? (exN>1?"critères présents":"critère présent") : `${exDone} sur 12 vérifiés`;
+  $("#t-exc").classList.toggle("alert", exN>0);
+  // bandelette
   const b = S.bu;
-  const buTxt = b.accord==="non"?"Refusée":b.realisable==="non"?"Non interprétable":(b.leuco&&b.nitrites)?((b.leuco==="pos"||b.nitrites==="pos")?"Positive":"Négative"):"—";
-  const buRing = buTxt==="Positive"?"calm":buTxt==="Négative"?"ok":(buTxt==="—"?"":"bad");
-  const item = (label,val,ring) => `<div class="sum-item"><div><small>${label}</small><strong>${val}</strong></div><span class="ring ${ring}"></span></div>`;
-  const rows = [
-    item("Patiente", S.prenom||S.nom ? esc(fullName())+(age!==null?`, ${age} ans`:"") : "—", (S.nom&&age!==null)?((S.circuit==="spontanee"&&(age<16||age>65))?"bad":"ok"):(S.nom||S.age?"half":""))
-  ];
-  if(S.circuit==="spontanee"){
-    rows.push(item("Symptômes", symAns?`${symN} sur 4${S.sympt.recent==="oui"?", récents":S.sympt.recent==="non"?", non récents":""}`:"—", symAns?(symN?"calm":"bad"):""));
-    rows.push(item("Gravité", urgAns?(urgN?`${urgN} signe${urgN>1?"s":""} d'alerte`:"Aucun signe"):"—", urgAns?(urgN?"bad":"ok"):""));
-    rows.push(item("Exclusions", exAns?(exN?`${exN} critère${exN>1?"s":""}`:"Aucune"):"—", exAns?(exN?"bad":"ok"):""));
-  } else {
-    rows.push(item("Circuit","Ordonnance « si BU+ »","calm"));
-  }
-  rows.push(item("Bandelette", buTxt, buRing));
-  $("#summary").innerHTML = rows.join("") + `<div class="decision lv-${o.lv}" style="margin-top:4px"><small>décision</small><strong>${esc(o.label)}</strong></div>`;
+  let buV="—", buS="en attente";
+  if(b.accord==="non"){ buV="×"; buS="refusée"; }
+  else if(b.realisable==="non"){ buV="?"; buS="non interprétable"; }
+  else if(b.leuco && b.nitrites){ const p = b.leuco==="pos"||b.nitrites==="pos"; buV = p?"+":"−"; buS = p?"positive":"négative"; }
+  $("#v-bu").textContent = buV; $("#s-bu").textContent = buS;
+  [b.leuco,b.nitrites,b.hematurie].forEach((v,i)=>$("#v-bars").children[i].classList.toggle("pos", v==="pos"));
+  $("#t-bu").classList.toggle("alert", b.hematurie==="pos" || b.accord==="non" || b.realisable==="non");
+  // décision
+  const dec = $("#t-dec");
+  const cls = "decision lv-"+o.lv;
+  if(dec.className.replace(" flash","") !== cls){ dec.className = cls; void dec.offsetWidth; dec.classList.add("flash"); }
+  $("#v-dec").textContent = o.label;
 }
 
 /* ------------------------------------------------------------------ *
@@ -979,7 +1738,7 @@ const TIP_ICON = {
   leaf:`<path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14Z"/><path d="M5 19 13 11"/>`,
   shirt:`<path d="M8 4 4 7l2 3 2-1v11h8V9l2 1 2-3-4-3c0 2-1.5 3-4 3S8 6 8 4Z"/>`
 };
-const tipSvg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="#E8913F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${TIP_ICON[k]}</svg>`;
+const tipSvg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="#FF4C29" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${TIP_ICON[k]}</svg>`;
 
 function pageHead(tag){
   return `<div class="p-head">
@@ -988,10 +1747,10 @@ function pageHead(tag){
   </div>`;
 }
 function pageFoot(n,total,extra=""){
-  return `<div class="p-foot"><div>${extra||`Pharmacien : <b style="color:#22201C">${esc(P.pharmacien||"—")}</b>${P.tel?` · Une question ? Appelez-nous au ${esc(P.tel)}`:""}`}</div><div class="p-mono">${n}/${total}</div></div>`;
+  return `<div class="p-foot"><div>${extra||`Pharmacien : <b style="color:#082032">${esc(P.pharmacien||"—")}</b>${P.tel?` · Une question ? Appelez-nous au ${esc(P.tel)}`:""}`}</div><div class="p-mono">${n}/${total}</div></div>`;
 }
 function selectedProducts(){
-  return [...PRODUCTS.filter(p=>S.products && S.products.has(p.id)), ...S.custom.map(c=>({name:c.name, role:"Conseillé par votre pharmacien", poso:c.poso}))];
+  return [...PRODS().filter(p=>S.products && S.products.has(p.id)), ...S.custom.map(c=>({name:c.name, role:"Conseillé par votre pharmacien", poso:c.poso}))];
 }
 function buChips(){
   const b=S.bu; if(b.accord!=="oui"||b.realisable!=="oui") return "";
@@ -1018,7 +1777,7 @@ function rxBlock(atb){
     </tbody></table>
     <ul class="p-rules"><li>Avalez pendant le repas avec un grand verre d'eau, assise ou debout ; ne vous allongez pas juste après.</li><li>Allez jusqu'au bout des 3 jours, même si les symptômes disparaissent avant.</li><li>Cochez chaque case au fur et à mesure pour ne pas oublier de prise.</li></ul>
   </div>`;
-  return `<div class="p-rx"><div><small class="p-mono" style="font-size:8pt;color:#8A4712;text-transform:uppercase;letter-spacing:.08em">votre antibiotique</small><div class="p-rx-name">Selon l'ordonnance de votre médecin</div><div class="p-rx-dose">Respectez la posologie indiquée sur l'ordonnance et la boîte.</div></div></div>`;
+  return `<div class="p-rx"><div><small class="p-mono" style="font-size:8pt;color:#B42E14;text-transform:uppercase;letter-spacing:.08em">votre antibiotique</small><div class="p-rx-name">Selon l'ordonnance de votre médecin</div><div class="p-rx-dose">Respectez la posologie indiquée sur l'ordonnance et la boîte.</div></div></div>`;
 }
 const CONSULT_RULES = [
   "Fièvre, frissons, douleur dans le dos ou sur les côtés, nausées ou vomissements",
@@ -1146,7 +1905,7 @@ function buildCR(d){
     </table></div>
     <div class="p-msg" style="min-height:22mm"><b style="display:block;margin-bottom:1mm">Points divers</b>${esc(S.notes.trim())||""}</div>
     <div style="display:flex;justify-content:space-between;gap:6mm;align-items:flex-end">
-      <div style="font-size:9pt"><b>${esc(P.pharmacien||"Pharmacien")}</b><br><span style="color:#6F685E">${esc(P.nom||"")}${P.rpps?" · RPPS "+esc(P.rpps):""}</span></div>
+      <div style="font-size:9pt"><b>${esc(P.pharmacien||"Pharmacien")}</b><br><span style="color:#56636F">${esc(P.nom||"")}${P.rpps?" · RPPS "+esc(P.rpps):""}</span></div>
       <div class="p-sign">Signature et cachet</div>
     </div>
     ${pageFoot(2,2,`Compte rendu généré le ${esc(dateFR)} · à enregistrer dans le DMP de la patiente`)}</div>`;
@@ -1154,6 +1913,7 @@ function buildCR(d){
 }
 
 function currentDocHTML(){
+  if(isA()){ const d = decide(); return docTab==="fiche" ? buildFicheA(d) : buildCRA(d); }
   const d = decide();
   return docTab==="fiche" ? buildFiche(d) : buildCR(d);
 }
@@ -1178,7 +1938,7 @@ function docFilename(){
   const n = (S.nom.trim()||"patiente").toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Z0-9]+/g,"-");
   const p = (S.prenom.trim()||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9]+/g,"-");
   const dt = today.toISOString().slice(0,10);
-  return `${docTab==="fiche"?"Fiche-conseil-cystite":"Compte-rendu-cystite-DMP"}_${n}${p?"_"+p:""}_${dt}.pdf`;
+  return `${docTab==="fiche"?"Fiche-conseil-"+S.proto:"Compte-rendu-"+S.proto+"-DMP"}_${n}${p?"_"+p:""}_${dt}.pdf`;
 }
 function printDoc(){
   const root = $("#print-root");
@@ -1189,7 +1949,7 @@ window.addEventListener("afterprint", ()=>{ $("#print-root").innerHTML=""; });
 
 async function downloadPDF(){
   if(!window.html2pdf){ toast("Bibliothèque PDF indisponible (hors ligne) : choisissez « Enregistrer au format PDF » dans la fenêtre d'impression."); printDoc(); return; }
-  const btn = $("#btn-pdf"); btn.disabled = true; const label = btn.innerHTML; btn.textContent = "Génération…";
+  const btn = $("#btn-pdf"); btn.disabled = true; const label = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span>Génération…';
   const holder = document.createElement("div");
   holder.style.cssText = "position:fixed;left:-10000px;top:0;width:210mm;";
   holder.innerHTML = currentDocHTML();
@@ -1219,7 +1979,15 @@ async function downloadPDF(){
  * ------------------------------------------------------------------ */
 function go(id){
   cur = id; visited.add(id); render();
+  animateEnter();
   window.scrollTo({top:0,behavior:"smooth"});
+}
+function animateEnter(){
+  const m = $("#main");
+  [...m.children].forEach((c,i)=>c.style.setProperty("--i",i));
+  m.querySelectorAll(".panel").forEach(p=>[...p.querySelectorAll(".q,.field,.prod,.todo li")].forEach((el,j)=>el.style.setProperty("--j",Math.min(j,12))));
+  m.classList.remove("enter"); void m.offsetWidth; m.classList.add("enter");
+  clearTimeout(animateEnter._t); animateEnter._t = setTimeout(()=>m.classList.remove("enter"), 1600);
 }
 function next(){
   const m = missingFor(cur);
@@ -1234,9 +2002,10 @@ function prev(){
   const steps = active();
   if(cur==="resultat"){ go(stopStep()); return; }
   const i = steps.findIndex(s=>s.id===cur);
-  if(i>0) go(steps[i-1].id);
+  if(i>0) go(steps[i-1].id); else go("accueil");
 }
 function stopStep(){
+  if(isA()) return stopStepA();
   const d = decide();
   if(d.code==="incomplet") return d.stage;
   if(S.circuit==="spontanee"){
@@ -1255,7 +2024,8 @@ document.addEventListener("change", e=>{
   if(t.matches('input[type="radio"][data-k]')){
     let v = t.value;
     set(t.dataset.k, v);
-    if(t.dataset.k==="circuit"){ /* pas de reset : on garde les réponses */ }
+    if(t.dataset.k.startsWith("ang.mac.")) S.ang.forceTrod = false;
+    if(t.dataset.k==="proto"){ S.products=null; S._prodTouched=false; S._prodFor=null; visited=new Set(["patiente"]); docTab="fiche"; }
     // si une réponse change le parcours, oublier les étapes au-delà
     trimVisited();
     if(t.dataset.rr || cur==="resultat"){ render(t.id); return; }
@@ -1284,11 +2054,15 @@ document.addEventListener("input", e=>{
   const ms = $("#missing-slot"); if(ms) ms.innerHTML="";
   if(t.dataset.k==="age"){
     const age=num(S.age), el=$("#age-badge");
-    if(el) el.innerHTML = age===null ? "" : (S.circuit==="spontanee" ? ((age<16||age>65) ? `<span class="badge bad">Hors protocole : 16 à 65 ans</span>` : `<span class="badge ok">Âge éligible</span>`) : (age<16 ? `<span class="badge bad">Moins de 16 ans</span>`:`<span class="badge ok">16 ans et plus</span>`));
+    if(el) el.innerHTML = ageBadgeHTML();
   }
   if(t.dataset.k.startsWith("clin.")){
     const k=t.dataset.k.slice(5), v=VITALS.find(x=>x[0]===k), n=num(t.value), fl=document.querySelector(`[data-flag="${k}"]`);
     if(fl){ fl.className = "vital-flag "+(n===null?"":v[4](n)?"bad":"ok"); fl.textContent = n===null?`seuil ${v[5]}`:v[4](n)?`hors seuil · ${v[5]}`:"normal"; }
+  }
+  if(t.dataset.k.startsWith("ang.clin.")){
+    const k=t.dataset.k.slice(9), v=VITALS_A.find(x=>x[0]===k), n=num(t.value), fl=document.querySelector(`[data-flag="a${k}"]`);
+    if(fl){ fl.className = "vital-flag "+(n===null?"":v[3](n)?"bad":"ok"); fl.textContent = n===null?`seuil ${v[4]}`:v[3](n)?`hors seuil · ${v[4]}`:"normal"; }
   }
   trimVisited();
   renderSummary(); refreshNextLabel();
@@ -1297,7 +2071,7 @@ document.addEventListener("input", e=>{
 function refreshNextLabel(){
   const b=$("#btn-next"); if(!b) return;
   const d=decide(); const ends = missingFor(cur).length===0 && d.code!=="incomplet";
-  b.textContent = (ends?"Voir le résultat":"Continuer")+" →";
+  b.innerHTML = (ends?"Voir le résultat":"Continuer")+' <span class="arr">→</span>';
 }
 function trimVisited(){
   const steps = active(); const i = steps.findIndex(s=>s.id===cur);
@@ -1307,12 +2081,15 @@ function trimVisited(){
 
 document.addEventListener("click", e=>{
   const t = e.target.closest("button"); if(!t) return;
+  if(t.dataset.proto){ chooseProto(t.dataset.proto); return; }
+  if(t.id==="btn-home"){ go("accueil"); return; }
   if(t.dataset.go){ go(t.dataset.go); return; }
   if(t.dataset.tab){ docTab=t.dataset.tab; renderDocs(); return; }
   if(t.dataset.rmcustom!=null){ S.custom.splice(+t.dataset.rmcustom,1); render(); return; }
   switch(t.id){
     case "btn-next": next(); break;
-    case "btn-allno": EXCL.forEach(e=>{ S.excl[e[0]]="non"; }); trimVisited(); next(); break;
+    case "btn-forcetrod": S.ang.forceTrod = true; trimVisited(); next(); break;
+    case "btn-allno": if(isA()) EXCL_A.forEach(e=>{ S.ang.excl[e[0]]="non"; }); else EXCL.forEach(e=>{ S.excl[e[0]]="non"; }); trimVisited(); next(); break;
     case "btn-prev": prev(); break;
     case "btn-pdf": downloadPDF(); break;
     case "btn-print": printDoc(); break;
@@ -1322,16 +2099,47 @@ document.addEventListener("click", e=>{
       S.custom.push({name:n,poso:p||"Selon les conseils de votre pharmacien"}); render(); break;
     }
     case "btn-reset": {
-      if(t.dataset.confirm!=="1"){ t.dataset.confirm="1"; t.textContent="Confirmer l'effacement"; t.classList.add("btn-calm"); setTimeout(()=>{t.dataset.confirm="";t.textContent="Nouvelle patiente";t.classList.remove("btn-calm");},3500); return; }
-      t.dataset.confirm=""; t.textContent="Nouvelle patiente"; t.classList.remove("btn-calm");
-      S = blank(); cur="patiente"; visited=new Set(["patiente"]); docTab="fiche"; render(); toast("Dossier effacé. Prêt pour une nouvelle patiente.");
+      if(t.dataset.confirm!=="1"){ t.dataset.confirm="1"; t.textContent="Confirmer l'effacement"; t.classList.add("btn-calm"); setTimeout(()=>{t.dataset.confirm="";t.textContent="Nouveau dossier";t.classList.remove("btn-calm");},3500); return; }
+      t.dataset.confirm=""; t.textContent="Nouveau dossier"; t.classList.remove("btn-calm");
+      const keepProto = S.proto; S = blank(); S.proto = keepProto; cur="accueil"; visited=new Set(["patiente"]); docTab="fiche"; render(); toast("Dossier effacé. Prêt pour un nouveau patient.");
       break;
     }
   }
 });
 
+(function(){
+  const g = $("#ticks"); let h = "";
+  for(let i=0;i<48;i++){ const a = i/48*2*Math.PI - Math.PI/2; const r1=88, r2=i%4===0?97:94;
+    h += `<line class="tick" x1="${(100+r1*Math.cos(a)).toFixed(1)}" y1="${(100+r1*Math.sin(a)).toFixed(1)}" x2="${(100+r2*Math.cos(a)).toFixed(1)}" y2="${(100+r2*Math.sin(a)).toFixed(1)}"/>`; }
+  g.innerHTML = h;
+})();
 $("#today-tag").textContent = today.toLocaleDateString("fr-FR",{weekday:"short",day:"2-digit",month:"short"}).replace(".","");
-render();
+render(); animateEnter();
+</script>
+<script>
+/* Ondulation au clic + mise en avant des tuiles de synthèse qui passent en alerte */
+(function(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.addEventListener("pointerdown", e=>{
+    const el = e.target.closest(".btn,.seg label,.prod,.steps button,.tabs button");
+    if(!el) return;
+    const host = el.matches(".seg label") ? el.parentElement : el;
+    const r = host.getBoundingClientRect();
+    const d = document.createElement("span"); d.className = "ripple-dot";
+    d.style.left = (e.clientX-r.left)+"px"; d.style.top = (e.clientY-r.top)+"px";
+    d.style.color = host.matches(".btn-dark,.steps button.on,.seg") ? "rgba(255,255,255,.7)" : "rgba(8,32,50,.28)";
+    if(getComputedStyle(host).position==="static") host.style.position = "relative";
+    host.style.overflow = "hidden"; host.appendChild(d); setTimeout(()=>d.remove(), 750);
+  });
+  const mo = new MutationObserver(list=>list.forEach(m=>{
+    const t = m.target;
+    if(m.attributeName==="class" && t.classList.contains("tile") && t.classList.contains("alert") && !(m.oldValue||"").includes("alert")){
+      t.classList.remove("bump"); void t.offsetWidth; t.classList.add("bump");
+    }
+  }));
+  const s = document.getElementById("summary");
+  if(s) mo.observe(s,{subtree:true,attributes:true,attributeFilter:["class"],attributeOldValue:true});
+})();
 </script>
 </body>
 </html>
