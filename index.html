@@ -1,0 +1,1330 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cystite Officine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" defer></script>
+<style>
+/* Layout : rail d'étapes à gauche (cadran de progression) · questionnaire au centre · synthèse en direct à droite.
+   Style : surfaces crème douces, cartes arrondies, étiquettes mono, accents orange « calm » / bleu-gris « focus ». */
+:root{
+  --bg:#E9E4DC; --surface:#F6F3EE; --surface-2:#EFEAE3; --line:#DED7CC;
+  --ink:#23211D; --muted:#7D766B; --faint:#A79F93;
+  --calm:#EC9A4E; --calm-soft:#F6D8B4; --calm-ink:#94501A;
+  --focus:#7C93A8; --focus-soft:#CED8E1; --focus-ink:#3C5366;
+  --rest:#9B98A5; --rest-soft:#DCDAE0;
+  --alert:#C5523B; --alert-soft:#F2D4CA; --alert-ink:#8A2E1B;
+  --pill:#2A2825; --pill-ink:#F4EFE7;
+  --tag:#F4EBD8;
+  --shadow:0 1px 0 rgba(255,255,255,.75) inset, 0 12px 28px -14px rgba(72,54,32,.22);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1B1A18; --surface:#25231F; --surface-2:#2C2A26; --line:#38352F;
+  --ink:#EFEAE2; --muted:#A49C90; --faint:#7A7368;
+  --calm:#F0A560; --calm-soft:#4A3622; --calm-ink:#F5C08A;
+  --focus:#93A8BB; --focus-soft:#2E3A45; --focus-ink:#BFD0DE;
+  --rest:#A9A6B2; --rest-soft:#34333A;
+  --alert:#E0745C; --alert-soft:#4A2820; --alert-ink:#F3B3A3;
+  --pill:#EFE9DF; --pill-ink:#1F1D1A; --tag:#3A3326;
+  --shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 14px 30px -16px rgba(0,0,0,.6);
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#1B1A18; --surface:#25231F; --surface-2:#2C2A26; --line:#38352F;
+  --ink:#EFEAE2; --muted:#A49C90; --faint:#7A7368;
+  --calm:#F0A560; --calm-soft:#4A3622; --calm-ink:#F5C08A;
+  --focus:#93A8BB; --focus-soft:#2E3A45; --focus-ink:#BFD0DE;
+  --rest:#A9A6B2; --rest-soft:#34333A;
+  --alert:#E0745C; --alert-soft:#4A2820; --alert-ink:#F3B3A3;
+  --pill:#EFE9DF; --pill-ink:#1F1D1A; --tag:#3A3326;
+  --shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 14px 30px -16px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--calm);outline-offset:2px}
+[hidden]{display:none!important}
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;letter-spacing:.02em;background:var(--tag);color:var(--ink);padding:5px 10px;border-radius:8px;box-shadow:0 1px 0 rgba(255,255,255,.6) inset,0 2px 6px -3px rgba(72,54,32,.2)}
+.mono{font-family:var(--mono)}
+
+/* ---------- top bar ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  padding-block:18px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));max-width:1440px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:40px;height:40px;border-radius:12px;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center}
+.brand h1{font-size:18px;margin:0;font-weight:600;letter-spacing:-.01em}
+.brand p{margin:0;font-size:12.5px;color:var(--muted)}
+.top-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+.btn{appearance:none;border:0;cursor:pointer;border-radius:14px;padding:11px 18px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px;transition:transform .35s var(--spring),background .2s,box-shadow .2s}
+.btn:active{transform:scale(.96)}
+.btn-dark{background:var(--pill);color:var(--pill-ink);box-shadow:0 8px 18px -10px rgba(0,0,0,.5)}
+.btn-dark:hover{transform:translateY(-1px)}
+.btn-soft{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.btn-ghost{background:transparent;color:var(--muted);padding:9px 12px}
+.btn-ghost:hover{color:var(--ink)}
+.btn-calm{background:var(--calm);color:#2A1A0A}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+/* ---------- shell ---------- */
+.shell{display:grid;grid-template-columns:250px minmax(0,1fr) 300px;gap:22px;align-items:start;max-width:1440px;margin:0 auto;
+  padding-bottom:48px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.card{background:var(--surface);border-radius:22px;box-shadow:var(--shadow)}
+.rail{position:sticky;top:16px;padding:18px;display:flex;flex-direction:column;gap:16px}
+.dial-wrap{display:grid;place-items:center;padding:6px 0 4px;position:relative}
+.dial-wrap svg{width:150px;height:150px}
+.dial-pct{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.dial-pct b{font-size:30px;font-weight:600;letter-spacing:-.02em;display:block;font-variant-numeric:tabular-nums}
+.dial-pct span{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.steps button{width:100%;display:flex;align-items:center;gap:10px;border:0;background:transparent;padding:9px 10px;border-radius:12px;cursor:pointer;text-align:left;font-size:14px;color:var(--muted);transition:background .2s}
+.steps button:hover:not([disabled]){background:var(--surface-2)}
+.steps button[disabled]{cursor:default;opacity:.55}
+.steps button.on{background:var(--surface-2);color:var(--ink);font-weight:600}
+.steps .dot{flex:none;width:20px;height:20px;border-radius:50%;border:1.6px solid var(--faint);display:grid;place-items:center;font-family:var(--mono);font-size:10px;transition:all .4s var(--spring)}
+.steps button.done .dot{background:var(--calm);border-color:var(--calm);color:#2A1A0A}
+.steps button.on .dot{border-color:var(--ink);border-width:2px}
+
+/* ---------- main ---------- */
+.main{min-width:0;display:flex;flex-direction:column;gap:18px}
+.step-head{display:flex;flex-direction:column;gap:10px;padding:4px 4px 0}
+.step-head h2{margin:0;font-size:28px;font-weight:600;letter-spacing:-.02em;text-wrap:balance}
+.step-head p{margin:0;color:var(--muted);max-width:62ch}
+.panel{padding:8px;display:flex;flex-direction:column;gap:8px;animation:rise .5s var(--spring)}
+@keyframes rise{from{transform:translateY(8px);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.panel-title{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px 2px;font-size:13px;color:var(--muted);font-weight:500}
+
+.q{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface-2);border-radius:16px;padding:14px 14px 14px 16px;transition:background .3s}
+.q-text{min-width:0}
+.q-label{font-weight:500}
+.q-hint{font-size:13px;color:var(--muted);margin-top:2px}
+.q[data-bad="1"]{background:var(--alert-soft)}
+.q[data-bad="1"] .q-hint{color:var(--alert-ink)}
+
+.seg{position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--surface);border-radius:12px;padding:3px;flex:none;min-width:150px;box-shadow:0 1px 2px rgba(0,0,0,.06) inset}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label{position:relative;z-index:1;text-align:center;padding:8px 14px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:9px;transition:color .25s;white-space:nowrap}
+.seg input:checked + label{color:var(--ink)}
+.seg input:focus-visible + label{outline:2px solid var(--calm);outline-offset:1px}
+.seg-knob{position:absolute;top:3px;bottom:3px;left:3px;border-radius:9px;background:var(--calm-soft);box-shadow:0 2px 8px -3px rgba(72,54,32,.35);opacity:0;transform:scale(.8);transition:transform .55s var(--spring),opacity .25s,background .25s;pointer-events:none}
+.seg[data-n="2"] .seg-knob{width:calc(50% - 3px)}
+.seg[data-n="3"] .seg-knob{width:calc(33.333% - 2px)}
+.seg[data-i="0"] .seg-knob{opacity:1;transform:translateX(0)}
+.seg[data-i="1"] .seg-knob{opacity:1;transform:translateX(100%)}
+.seg[data-i="2"] .seg-knob{opacity:1;transform:translateX(200%)}
+.seg[data-tone="bad"] .seg-knob{background:var(--alert);}
+.seg[data-tone="bad"] input:checked + label{color:#fff}
+.seg[data-tone="ok"] .seg-knob{background:var(--focus-soft)}
+
+.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:6px}
+.field{display:flex;flex-direction:column;gap:6px;background:var(--surface-2);border-radius:14px;padding:10px 12px}
+.field.wide{grid-column:1/-1}
+.field label{font-size:12px;color:var(--muted);font-weight:500}
+.field input,.field textarea,.field select{border:0;background:transparent;padding:2px 0;font-size:15px;outline:none;width:100%;min-width:0}
+.field textarea{resize:vertical;min-height:52px}
+.field:focus-within{box-shadow:0 0 0 2px var(--calm) inset}
+.field .unit{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.field-row{display:flex;align-items:baseline;gap:8px}
+.vital-flag{font-size:12px;font-weight:600;font-family:var(--mono)}
+.vital-flag.bad{color:var(--alert)}
+.vital-flag.ok{color:var(--focus-ink)}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:99px;background:var(--surface);color:var(--muted)}
+.badge.bad{background:var(--alert-soft);color:var(--alert-ink)}
+.badge.ok{background:var(--focus-soft);color:var(--focus-ink)}
+.badge.calm{background:var(--calm-soft);color:var(--calm-ink)}
+
+details.pharma{background:var(--surface-2);border-radius:16px;padding:4px 6px;margin:0 6px 6px}
+details.pharma summary{cursor:pointer;padding:10px 8px;font-weight:500;font-size:14px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.pharma summary::-webkit-details-marker{display:none}
+details.pharma .fields{padding:2px 0 8px}
+details.pharma .field{background:var(--surface)}
+
+.notice{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:var(--surface-2);font-size:14px}
+.notice b{font-weight:600}
+.notice.bad{background:var(--alert-soft);color:var(--alert-ink)}
+.notice.calm{background:var(--calm-soft);color:var(--calm-ink)}
+.notice.focus{background:var(--focus-soft);color:var(--focus-ink)}
+.notice ol,.notice ul{margin:6px 0 0;padding-left:18px}
+
+.nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.missing{font-size:13px;color:var(--alert-ink);background:var(--alert-soft);padding:8px 12px;border-radius:12px}
+
+/* ---------- summary ---------- */
+.summary{position:sticky;top:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.summary h3{margin:2px 4px 4px;font-size:20px;font-weight:600;letter-spacing:-.01em}
+.sum-item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface-2);border-radius:16px;padding:12px 14px}
+.sum-item small{display:block;font-size:12px;color:var(--muted)}
+.sum-item strong{font-weight:600;font-size:15px}
+.ring{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--faint);position:relative;transition:all .45s var(--spring)}
+.ring.ok{border-color:var(--focus)}
+.ring.ok::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--focus)}
+.ring.calm{border-color:var(--calm)}
+.ring.calm::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--calm)}
+.ring.bad{border-color:var(--alert)}
+.ring.bad::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--alert)}
+.ring.half{border-color:var(--calm);border-right-color:var(--faint);border-bottom-color:var(--faint)}
+.decision{border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.decision small{font-family:var(--mono);font-size:11px;opacity:.8}
+.decision strong{font-size:16px;line-height:1.3}
+.lv-urgent{background:var(--alert);color:#fff}
+.lv-refer{background:var(--focus-soft);color:var(--focus-ink)}
+.lv-treat{background:var(--calm-soft);color:var(--calm-ink)}
+.lv-neg{background:var(--focus-soft);color:var(--focus-ink)}
+.lv-pending{background:var(--surface-2);color:var(--muted)}
+.privacy{font-size:12px;color:var(--muted);padding:4px 6px 0}
+
+/* ---------- result ---------- */
+.hero{padding:22px;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;border-radius:22px}
+.hero h3{margin:0;font-size:24px;letter-spacing:-.02em;text-wrap:balance}
+.hero p{margin:4px 0 0}
+.hero-icon{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.35)}
+.todo{list-style:none;margin:0;padding:4px 6px;display:flex;flex-direction:column;gap:6px}
+.todo li{display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);padding:11px 14px;border-radius:14px;font-size:14px}
+.todo input{margin-top:3px;accent-color:var(--calm)}
+.prods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:6px}
+.prod{position:relative;display:flex;gap:10px;align-items:flex-start;background:var(--surface-2);border-radius:16px;padding:12px 14px;cursor:pointer;transition:transform .4s var(--spring),box-shadow .2s;border:1.5px solid transparent}
+.prod:hover{transform:translateY(-1px)}
+.prod input{position:absolute;opacity:0}
+.prod .chk{flex:none;width:20px;height:20px;border-radius:7px;border:1.6px solid var(--faint);display:grid;place-items:center;margin-top:1px;transition:all .35s var(--spring)}
+.prod input:checked ~ .chk{background:var(--calm);border-color:var(--calm)}
+.prod input:checked ~ .chk::after{content:"";width:9px;height:5px;border-left:2px solid #2A1A0A;border-bottom:2px solid #2A1A0A;transform:rotate(-45deg) translate(1px,-1px)}
+.prod:has(input:checked){border-color:var(--calm)}
+.prod input:focus-visible ~ .chk{outline:2px solid var(--calm);outline-offset:2px}
+.prod b{display:block;font-weight:600;font-size:14px}
+.prod span.r{display:block;font-size:12.5px;color:var(--muted)}
+.custom-row{display:grid;grid-template-columns:1fr 1.6fr auto;gap:8px;padding:0 6px 6px}
+.custom-row .field{padding:8px 12px}
+.billing{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:6px}
+.billing div{background:var(--surface-2);border-radius:14px;padding:12px 14px}
+.billing small{display:block;font-size:12px;color:var(--muted)}
+.billing b{font-size:18px;font-variant-numeric:tabular-nums}
+
+.doc-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 12px 4px}
+.tabs{display:inline-flex;background:var(--surface-2);border-radius:14px;padding:3px;gap:2px}
+.tabs button{border:0;background:transparent;padding:8px 14px;border-radius:11px;font-weight:600;font-size:13.5px;color:var(--muted);cursor:pointer;transition:all .3s var(--spring)}
+.tabs button.on{background:var(--surface);color:var(--ink);box-shadow:0 2px 8px -4px rgba(0,0,0,.25)}
+.doc-actions{display:flex;gap:8px;flex-wrap:wrap}
+.preview{overflow-x:auto;padding:14px;border-radius:18px;background:var(--surface-2);margin:6px}
+.preview-inner{display:flex;flex-direction:column;align-items:center;gap:16px;transform-origin:top center}
+.preview .page{box-shadow:0 18px 40px -22px rgba(40,30,20,.45)}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);opacity:0;background:var(--pill);color:var(--pill-ink);padding:12px 18px;border-radius:14px;font-size:14px;transition:all .5s var(--spring);z-index:50;max-width:calc(100vw - 32px)}
+.toast.show{transform:translate(-50%,0);opacity:1}
+
+@media (max-width:1180px){
+  .shell{grid-template-columns:220px minmax(0,1fr)}
+  .summary{position:static;grid-column:2}
+}
+@media (max-width:820px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .rail{position:static;flex-direction:row;align-items:center;overflow-x:auto}
+  .dial-wrap svg{width:84px;height:84px}
+  .dial-pct b{font-size:18px}.dial-pct span{display:none}
+  .steps{flex-direction:row;gap:2px}
+  .steps button{white-space:nowrap;padding:8px}
+  .steps button .lbl{display:none}
+  .steps button.on .lbl{display:inline}
+  .summary{grid-column:auto}
+  .fields,.prods,.billing{grid-template-columns:minmax(0,1fr)}
+  .custom-row{grid-template-columns:minmax(0,1fr)}
+  .q{flex-direction:column;align-items:stretch}
+  .seg{min-width:0}
+  .hero{grid-template-columns:1fr}
+  .step-head h2{font-size:23px}
+}
+
+/* =====================================================================
+   DOCUMENTS IMPRIMABLES (A4) — papier toujours clair, couleurs fixes
+   ===================================================================== */
+.page{
+  --p-ink:#22201C; --p-muted:#6F685E; --p-line:#E4DDD2; --p-card:#F7F3ED; --p-card2:#FBF8F4;
+  --p-calm:#E8913F; --p-calm-soft:#FCE9D3; --p-calm-ink:#8A4712;
+  --p-focus:#6F879C; --p-focus-soft:#E2E9EF; --p-focus-ink:#34495B;
+  --p-alert:#C04A32; --p-alert-soft:#F9E1DA; --p-alert-ink:#842A18;
+  width:210mm;height:297mm;overflow:hidden;background:#fff;color:var(--p-ink);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:10pt;line-height:1.42;
+  padding:13mm 14mm 12mm;display:flex;flex-direction:column;gap:5mm;position:relative;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+.page *{box-sizing:border-box}
+.page .p-mono{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.p-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8mm}
+.p-pharma b{display:block;font-size:11pt}
+.p-pharma span{display:block;color:var(--p-muted);font-size:8.6pt}
+.p-tag{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:8pt;background:#F4EBD8;padding:1.6mm 3mm;border-radius:2mm;display:inline-block;color:var(--p-ink)}
+.p-right{text-align:right;display:flex;flex-direction:column;gap:1.5mm;align-items:flex-end;font-size:8.6pt;color:var(--p-muted)}
+.p-title small{display:block;color:var(--p-muted);font-size:9.5pt;margin-bottom:1mm}
+.p-title h1{margin:0;font-size:22pt;line-height:1.12;letter-spacing:-.02em;font-weight:700}
+.p-title p{margin:2mm 0 0;font-size:10.5pt;color:var(--p-muted);max-width:150mm}
+.p-results{display:flex;gap:3mm;flex-wrap:wrap}
+.p-res{display:flex;align-items:center;gap:2.5mm;background:var(--p-card);border-radius:3mm;padding:2mm 3.5mm;font-size:9pt}
+.p-res i{font-style:normal;font-weight:700;font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;width:6mm;height:6mm;border-radius:50%;display:grid;place-items:center;font-size:9pt}
+.p-res i.pos{background:var(--p-calm);color:#fff}
+.p-res i.neg{background:var(--p-focus-soft);color:var(--p-focus-ink)}
+.p-rx{background:var(--p-calm-soft);border-radius:5mm;padding:6mm;display:flex;flex-direction:column;gap:4mm}
+.p-rx-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6mm}
+.p-rx-top small{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:8pt;color:var(--p-calm-ink);text-transform:uppercase;letter-spacing:.08em}
+.p-rx-name{font-size:20pt;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-top:1mm}
+.p-rx-dose{font-size:11pt;color:var(--p-calm-ink);font-weight:600;margin-top:1mm}
+.p-rx-big{text-align:center;background:#fff;border-radius:4mm;padding:3mm 5mm;min-width:38mm}
+.p-rx-big b{display:block;font-size:26pt;line-height:1;font-weight:700;color:var(--p-calm)}
+.p-rx-big span{font-size:8.5pt;color:var(--p-muted)}
+.p-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm}
+.p-step{background:#fff;border-radius:3.5mm;padding:3.5mm;font-size:9.4pt}
+.p-step i{font-style:normal;display:inline-grid;place-items:center;width:6mm;height:6mm;border-radius:50%;background:var(--p-calm);color:#fff;font-weight:700;font-size:8.5pt;margin-bottom:1.5mm}
+.p-step b{display:block;font-size:10pt;margin-bottom:.5mm}
+.p-grid{width:100%;border-collapse:separate;border-spacing:1.6mm;background:#fff;border-radius:3.5mm;padding:1mm}
+.p-grid th{font-size:8.5pt;color:var(--p-muted);font-weight:600;text-align:center;padding:1mm}
+.p-grid th:first-child{text-align:left}
+.p-grid td{background:var(--p-card2);border-radius:2.5mm;text-align:center;padding:2.4mm 1mm;font-size:9pt}
+.p-grid td:first-child{text-align:left;font-weight:600;background:transparent;padding-left:2mm}
+.p-box{display:inline-block;width:4.5mm;height:4.5mm;border:1.4px solid var(--p-calm);border-radius:1.2mm;vertical-align:-1mm;margin-right:1.5mm;background:#fff}
+.p-rules{display:flex;flex-direction:column;gap:1.4mm;font-size:9.4pt;margin:0;padding:0;list-style:none}
+.p-rules li{display:flex;gap:2.5mm}
+.p-rules li::before{content:"";flex:none;width:1.8mm;height:1.8mm;border-radius:50%;background:var(--p-calm);margin-top:1.6mm}
+.p-card{background:var(--p-card);border-radius:4mm;padding:4.5mm 5mm}
+.p-card h2{margin:0 0 2mm;font-size:12pt;letter-spacing:-.01em}
+.p-card.alert{background:var(--p-alert-soft);color:var(--p-alert-ink)}
+.p-card.alert h2{color:var(--p-alert)}
+.p-card.alert .p-rules li::before{background:var(--p-alert)}
+.p-card.focus{background:var(--p-focus-soft);color:var(--p-focus-ink)}
+.p-card.focus .p-rules li::before{background:var(--p-focus)}
+.p-two{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+.p-tips{display:grid;grid-template-columns:1fr 1fr;gap:2.2mm 5mm;margin:0;padding:0;list-style:none}
+.p-tips li{display:flex;gap:2.5mm;font-size:9.2pt;align-items:flex-start}
+.p-tips li svg{flex:none;width:5mm;height:5mm;margin-top:.2mm}
+.p-tips li b{font-weight:600}
+.p-prod{width:100%;border-collapse:collapse;font-size:9.2pt}
+.p-prod th{text-align:left;font-size:8pt;color:var(--p-muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:0 2mm 1.5mm}
+.p-prod td{padding:2.6mm 2mm;border-top:1px solid var(--p-line);vertical-align:top}
+.p-prod td:first-child{width:52mm}
+.p-prod td b{display:block}
+.p-prod td span{color:var(--p-muted);font-size:8.4pt}
+.p-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:6mm;font-size:8.4pt;color:var(--p-muted);border-top:1px solid var(--p-line);padding-top:3mm}
+.p-sign{border:1px dashed #CFC6B8;border-radius:3mm;width:60mm;height:18mm;padding:1.5mm 2.5mm;font-size:8pt;color:var(--p-muted)}
+.p-msg{background:var(--p-card2);border:1px solid var(--p-line);border-radius:4mm;padding:4mm 5mm;font-size:9.6pt;white-space:pre-wrap}
+.p-banner{border-radius:5mm;padding:6mm;display:flex;gap:5mm;align-items:center}
+.p-banner.urgent{background:var(--p-alert);color:#fff}
+.p-banner.refer{background:var(--p-focus-soft);color:var(--p-focus-ink)}
+.p-banner b{display:block;font-size:15pt;letter-spacing:-.01em;line-height:1.2}
+.p-banner .p-ic{flex:none;width:14mm;height:14mm;border-radius:50%;background:rgba(255,255,255,.3);display:grid;place-items:center}
+.p-pageno{position:absolute;bottom:5mm;right:14mm;font-size:7.5pt;color:#B0A799;font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+
+/* compte rendu */
+.cr-id{display:grid;grid-template-columns:repeat(3,1fr);gap:2mm;font-size:9pt}
+.cr-id div{background:var(--p-card);border-radius:2.5mm;padding:2mm 3mm}
+.cr-id small{display:block;color:var(--p-muted);font-size:7.6pt}
+.cr-id b{font-weight:600}
+.cr-block{border:1px solid var(--p-line);border-radius:3.5mm;overflow:hidden}
+.cr-block-h{display:flex;gap:3mm;align-items:center;padding:2.6mm 3.5mm;background:var(--p-card);font-weight:600;font-size:9.6pt}
+.cr-block-h.on{background:var(--p-calm-soft);color:var(--p-calm-ink)}
+.cr-num{flex:none;width:6mm;height:6mm;border-radius:50%;border:1.4px solid currentColor;display:grid;place-items:center;font-size:8pt;font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.cr-items{display:grid;grid-template-columns:1fr 1fr;gap:.8mm 4mm;padding:2mm 3.5mm;font-size:8pt;line-height:1.28}
+.cr-items.three{grid-template-columns:1fr 1fr 1fr}
+.cr-it{display:flex;gap:2mm;align-items:flex-start;color:var(--p-muted)}
+.cr-it.on{color:var(--p-ink);font-weight:600}
+.cbx{flex:none;width:3.4mm;height:3.4mm;border:1.2px solid #B9AE9E;border-radius:.8mm;margin-top:.3mm;display:grid;place-items:center;background:#fff}
+.cbx.on{background:var(--p-calm);border-color:var(--p-calm)}
+.cbx.on::after{content:"";width:1.7mm;height:.9mm;border-left:1.3px solid #fff;border-bottom:1.3px solid #fff;transform:rotate(-45deg) translateY(-.2mm)}
+.cr-table{width:100%;border-collapse:collapse;font-size:8.8pt}
+.cr-table td,.cr-table th{border-top:1px solid var(--p-line);padding:1.8mm 2mm;text-align:left;vertical-align:top}
+.cr-table th{color:var(--p-muted);font-weight:500;width:58mm}
+.cr-h{font-size:10.5pt;margin:0 0 1.5mm;font-weight:700}
+
+/* impression */
+#print-root{display:none}
+@page{size:A4;margin:0}
+@media print{
+  html,body{background:#fff!important}
+  .app,.toast{display:none!important}
+  #print-root{display:block}
+  #print-root .page{break-after:page;page-break-after:always;box-shadow:none}
+  #print-root .page:last-child{break-after:auto;page-break-after:auto}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3c3.5 4.4 6 7.7 6 11a6 6 0 1 1-12 0c0-3.3 2.5-6.6 6-11Z" stroke="var(--calm)" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5" stroke="var(--calm)" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div>
+        <h1>Cystite simple · officine</h1>
+        <p>Protocole de dépistage par bandelette urinaire chez la femme de 16 à 65 ans</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <span class="tag" id="today-tag">—</span>
+      <button class="btn btn-soft" id="btn-reset" type="button">Nouvelle patiente</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="rail card" aria-label="Étapes">
+      <div class="dial-wrap">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="48" fill="none" stroke="var(--surface-2)" stroke-width="12"/>
+          <circle id="dial-arc" cx="60" cy="60" r="48" fill="none" stroke="var(--calm)" stroke-width="12" stroke-linecap="round"
+            stroke-dasharray="301.6" stroke-dashoffset="301.6" transform="rotate(-90 60 60)" style="transition:stroke-dashoffset .8s var(--spring)"/>
+          <circle id="dial-knob" cx="60" cy="12" r="5" fill="#fff" stroke="var(--calm)" stroke-width="2" style="transform-origin:60px 60px;transition:transform .8s var(--spring)"/>
+        </svg>
+        <div class="dial-pct"><div><b id="dial-num">0%</b><span>progression</span></div></div>
+      </div>
+      <ol class="steps" id="steps"></ol>
+    </aside>
+
+    <main class="main" id="main"></main>
+
+    <aside class="summary card" aria-label="Synthèse">
+      <span class="tag" style="align-self:flex-start">synthèse en direct</span>
+      <h3>Vue d'ensemble</h3>
+      <div id="summary"></div>
+      <p class="privacy">Les données de la patiente restent dans ce navigateur et sont effacées avec « Nouvelle patiente ». Seules les coordonnées de la pharmacie sont mémorisées.</p>
+    </aside>
+  </div>
+</div>
+<div id="print-root" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ------------------------------------------------------------------ *
+ *  Référentiels (Assurance Maladie, juin 2024 · URPS Pharmaciens PACA)
+ * ------------------------------------------------------------------ */
+const SYMPT = [
+  ["brulures","Brûlures ou douleurs mictionnelles","Douleur ou brûlure en urinant"],
+  ["pollakiurie","Pollakiurie","Envies d'uriner fréquentes, petits volumes"],
+  ["dysurie","Dysurie","Difficulté à uriner"],
+  ["imperieuses","Mictions impérieuses","Besoin urgent, difficile à retenir"]
+];
+const URG = [
+  ["fievre","Fièvre, hypothermie ou frissons","Fièvre rapportée > 38 °C, sensation de froid < 36 °C, frissons"],
+  ["lombaire","Douleur d'une fosse lombaire ou des flancs","Signe évocateur de pyélonéphrite"],
+  ["digestif","Vomissements, diarrhée ou douleurs abdominales diffuses","Autre signe évocateur de pyélonéphrite"]
+];
+const EXCL = [
+  ["recueil","Recueil insuffisant des informations médicales","Non-maîtrise du français, réponses inadaptées, pas de dossier médical disponible"],
+  ["grossesse","Grossesse avérée ou non exclue","Retard de règles, absence de contraception fiable"],
+  ["gyneco","Signes d'appel gynécologiques","Leucorrhées, prurit vulvaire ou vaginal"],
+  ["repetition","Cystites à répétition","3 épisodes ou plus dans les 12 derniers mois"],
+  ["nonResolue","Cystite non complètement résolue","Épisode dans les 15 derniers jours"],
+  ["arbre","Anomalie de l'arbre urinaire","Uropathie, résidu vésical, reflux, lithiase, tumeur, chirurgie récente, endoscopie, sondage"],
+  ["immuno","Immunodépression ou risque d'immunodépression","VIH, corticothérapie au long cours, immunosuppresseurs, chimiothérapie"],
+  ["catheter","Cathéter veineux implanté",""],
+  ["irc","Insuffisance rénale chronique sévère","DFG < 30 mL/min/1,73 m² (CKD-EPI)"],
+  ["atb","Antibiothérapie en cours","Pour une autre pathologie"],
+  ["fluoro","Fluoroquinolone dans les 3 derniers mois","Risque de sélection de germes résistants"],
+  ["doute","Doute du pharmacien","Tout élément qui vous fait douter de la prise en charge à l'officine"]
+];
+const VITALS = [
+  ["temp","Température","°C","36,0 à 38,0", v => v > 38 || v < 36, "> 38 °C ou < 36 °C", 30, 45, 0.1],
+  ["pas","Pression artérielle systolique","mmHg","≥ 90", v => v < 90, "< 90 mmHg", 40, 260, 1],
+  ["fc","Fréquence cardiaque","/min","≤ 110", v => v > 110, "> 110 /min", 20, 250, 1],
+  ["fr","Fréquence respiratoire","/min","≤ 20", v => v > 20, "> 20 /min", 4, 60, 1]
+];
+const PRODUCTS = [
+  {id:"paracetamol", name:"Paracétamol", role:"Douleurs, brûlures", poso:"1 g par prise (2 comprimés de 500 mg ou 1 de 1 g). Au moins 6 h entre deux prises, 3 g maximum par jour."},
+  {id:"phloroglucinol", name:"Phloroglucinol 80 mg lyophilisat", role:"Spasmes, douleurs du bas-ventre", poso:"2 lyophilisats à laisser fondre sous la langue. Renouveler si besoin, 2 h minimum entre les prises, 6 par jour maximum."},
+  {id:"canneberge", name:"Canneberge (36 mg de PAC / jour)", role:"Prévention des récidives", poso:"1 prise par jour, en cure d'au moins 1 mois. Ne remplace pas l'antibiotique. Déconseillée avec un anticoagulant AVK."},
+  {id:"dmannose", name:"D-mannose", role:"Prévention des récidives", poso:"Selon la notice, en cure. Ne remplace pas l'antibiotique."},
+  {id:"probiotiques", name:"Probiotiques (lactobacilles)", role:"Équilibre de la flore pendant l'antibiotique", poso:"1 gélule par jour pendant le traitement et la semaine qui suit."},
+  {id:"intime", name:"Soin lavant intime doux, sans parfum", role:"Hygiène intime respectueuse", poso:"1 toilette externe par jour, rincer et bien sécher. Jamais de douche vaginale."},
+  {id:"bouillotte", name:"Bouillotte ou coussin chauffant", role:"Soulagement des douleurs", poso:"Sur le bas-ventre, 15 à 20 minutes, en protégeant la peau."}
+];
+const TIPS = [
+  ["drop","Buvez au moins 1,5 L par jour","eau et boissons non alcoolisées : le flux d'urine chasse les bactéries"],
+  ["clock","Urinez dès que l'envie se présente","ne vous retenez pas"],
+  ["circle","Videz complètement votre vessie","un reste d'urine favorise la multiplication des bactéries"],
+  ["arrow","Essuyez-vous d'avant en arrière","après chaque passage aux toilettes"],
+  ["heart","Après un rapport sexuel, urinez aussitôt","et évitez les spermicides si les infections surviennent après les rapports"],
+  ["no","Pas de douche vaginale",""],
+  ["no","Pas de produits intimes parfumés ni de bains moussants",""],
+  ["leaf","Luttez contre la constipation","fibres, fruits, légumes, hydratation"],
+  ["shirt","Portez des sous-vêtements en coton","et évitez les pantalons trop serrés"]
+];
+
+/* ------------------------------------------------------------------ *
+ *  État
+ * ------------------------------------------------------------------ */
+const blank = () => ({
+  circuit:"spontanee",
+  nom:"", prenom:"", age:"", nir:"", medecin:"", consent:null,
+  sympt:{brulures:null,pollakiurie:null,dysurie:null,imperieuses:null,recent:null},
+  urg:{fievre:null,lombaire:null,digestif:null},
+  excl:Object.fromEntries(EXCL.map(e=>[e[0],null])),
+  clin:{temp:"",pas:"",fc:"",fr:""},
+  allergie:{fosfo:null,pivme:null},
+  hist:{maladies:"",allergies:"",traitements:"",evenement:"",autre:""},
+  bu:{accord:null,realisable:null,leuco:null,nitrites:null,hematurie:null,autre:""},
+  ordoAtb:"fosfo",
+  products:null, custom:[], notes:"", noteOnFiche:"oui"
+});
+let S = blank();
+let P = loadPharma();
+let cur = "patiente";
+let visited = new Set(["patiente"]);
+let docTab = "fiche";
+
+function loadPharma(){
+  const d = {nom:"",adresse:"",tel:"",pharmacien:"",rpps:""};
+  try{ const s = JSON.parse(localStorage.getItem("cystite.pharma")||"null"); if(s) Object.assign(d,s); }catch(e){}
+  return d;
+}
+function savePharma(){ try{ localStorage.setItem("cystite.pharma", JSON.stringify(P)); }catch(e){} }
+
+const STEPS = [
+  {id:"patiente", label:"Patiente", tag:"01 · identité", title:"Qui est la patiente ?", intro:"Identité, circuit de prise en charge et consentement au partage des informations avec le médecin traitant et le DMP."},
+  {id:"symptomes", spont:true, label:"Symptômes", tag:"02 · motif", title:"Symptômes évocateurs de cystite", intro:"Au moins un signe fonctionnel urinaire d'apparition récente est nécessaire pour entrer dans le protocole."},
+  {id:"urgence", spont:true, label:"Signes de gravité", tag:"03 · urgence", title:"Signes de gravité à rechercher", intro:"Un seul « oui » impose une consultation médicale en urgence : la prise en charge à l'officine s'arrête là."},
+  {id:"exclusion", spont:true, label:"Exclusions", tag:"04 · exclusion", title:"Critères d'exclusion", intro:"Un seul « oui », ou un doute de votre part, oriente la patiente vers un médecin dans les 24 heures."},
+  {id:"clinique", spont:true, label:"Examen clinique", tag:"05 · constantes", title:"Évaluation clinique", intro:"Mesurez les constantes. Une valeur hors seuil impose une consultation médicale en urgence."},
+  {id:"antecedents", label:"Antécédents", tag:"06 · interrogatoire", title:"Allergies et antécédents", intro:"Les allergies conditionnent le choix de l'antibiotique. Les réponses libres sont reportées dans le compte rendu."},
+  {id:"bandelette", label:"Bandelette", tag:"07 · test", title:"Bandelette urinaire", intro:"Recueil d'urine de milieu de jet après toilette. Lecture des leucocytes et des nitrites au temps indiqué par le fabricant."},
+  {id:"resultat", label:"Résultat & fiches", tag:"08 · documents", title:"Résultat et documents à remettre", intro:"Choisissez les produits conseillés, puis téléchargez ou imprimez la fiche patiente et le compte rendu pour le DMP."}
+];
+const active = () => STEPS.filter(s => !(s.spont && S.circuit==="orientee"));
+
+/* ------------------------------------------------------------------ *
+ *  Outils
+ * ------------------------------------------------------------------ */
+const $ = (s,r=document)=>r.querySelector(s);
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num = v => { if(v===""||v==null) return null; const n = parseFloat(String(v).replace(",",".")); return isNaN(n)?null:n; };
+const get = path => path.split(".").reduce((o,k)=>o==null?undefined:o[k], S);
+const set = (path,v) => { const ks = path.split("."); let o=S; ks.slice(0,-1).forEach(k=>o=o[k]); o[ks.at(-1)] = v; };
+const today = new Date();
+const dateFR = today.toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
+const dateShort = today.toLocaleDateString("fr-FR");
+const fullName = () => [S.prenom.trim(), S.nom.trim().toUpperCase()].filter(Boolean).join(" ");
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),3200); }
+
+/* ------------------------------------------------------------------ *
+ *  Arbre de décision
+ * ------------------------------------------------------------------ */
+function decide(){
+  const R = (code, o={}) => Object.assign({code, reasons:[], items:{1:[],2:[],3:null,4:[]}, buDone:false, hematurie:false}, o);
+  const age = num(S.age);
+  const bu = S.bu;
+  const buResult = () => {
+    if(bu.accord==null) return "pending";
+    if(bu.accord==="non") return "refus";
+    if(bu.realisable==null) return "pending";
+    if(bu.realisable==="non") return "ininterpretable";
+    if(bu.leuco==null || bu.nitrites==null || bu.hematurie==null) return "pending";
+    return (bu.leuco==="pos" || bu.nitrites==="pos") ? "pos" : "neg";
+  };
+
+  if(S.circuit==="orientee"){
+    if(age===null || !S.nom.trim() || !S.prenom.trim() || S.consent==null) return R("incomplet",{stage:"patiente"});
+    if(age<16) return R("ordo_impossible",{reasons:["Patiente âgée de moins de 16 ans"]});
+    if(S.consent==="non") return R("ordo_impossible",{reasons:["Consentement non recueilli"]});
+    if(S.allergie.fosfo==null || S.allergie.pivme==null) return R("incomplet",{stage:"antecedents"});
+    const b = buResult();
+    if(b==="pending") return R("incomplet",{stage:"bandelette"});
+    if(b==="refus") return R("ordo_impossible",{reasons:["La patiente refuse la bandelette urinaire"]});
+    if(b==="ininterpretable") return R("ordo_impossible",{reasons:["Bandelette non réalisable ou non interprétable"], buDone:true});
+    const hem = bu.hematurie==="pos";
+    if(b==="pos"){
+      const atb = S.ordoAtb;
+      if((atb==="fosfo" && S.allergie.fosfo==="oui") || (atb==="pivme" && S.allergie.pivme==="oui"))
+        return R("ordo_impossible",{reasons:["Allergie déclarée à l'antibiotique prescrit"], buDone:true, hematurie:hem});
+      return R("ordo_pos",{atb, buDone:true, hematurie:hem, pee:10});
+    }
+    return R("ordo_neg",{buDone:true, hematurie:hem, pee:10, reasons: hem?["Sang détecté dans les urines"]:[]});
+  }
+
+  // --- circuit spontané (protocole) ---
+  if(age===null || !S.nom.trim() || !S.prenom.trim() || S.consent==null) return R("incomplet",{stage:"patiente"});
+  if(age<16 || age>65){ const r=R("medecin",{reasons:["Âge hors de la tranche 16 à 65 ans"]}); r.items[1].push("age"); return r; }
+  if(S.consent==="non") return R("medecin",{reasons:["Consentement au partage des informations non recueilli"]});
+
+  const sy = S.sympt;
+  if(Object.values(sy).some(v=>v==null)) return R("incomplet",{stage:"symptomes"});
+  const anySym = SYMPT.some(s=>sy[s[0]]==="oui");
+  if(!anySym) return R("medecin",{reasons:["Aucun symptôme évocateur de cystite"]});
+  if(sy.recent==="non") return R("medecin",{reasons:["Symptômes non récents"]});
+
+  const urgYes = URG.filter(u=>S.urg[u[0]]==="oui");
+  if(urgYes.length){ const r=R("urgence",{reasons:urgYes.map(u=>u[1])}); r.items[2]=urgYes.map(u=>u[0]); return r; }
+  if(URG.some(u=>S.urg[u[0]]==null)) return R("incomplet",{stage:"urgence"});
+
+  const exYes = EXCL.filter(e=>S.excl[e[0]]==="oui");
+  if(exYes.length){ const r=R("medecin",{reasons:exYes.map(e=>e[1])}); r.items[1]=exYes.map(e=>e[0]); return r; }
+  if(EXCL.some(e=>S.excl[e[0]]==null)) return R("incomplet",{stage:"exclusion"});
+
+  const vit = VITALS.map(v=>({v, n:num(S.clin[v[0]])}));
+  if(vit.some(x=>x.n===null)) {
+    const bad = vit.filter(x=>x.n!==null && x.v[4](x.n));
+    if(bad.length){ const r=R("urgence",{reasons:bad.map(x=>`${x.v[1]} ${x.v[5]}`)}); r.items[2]=bad.map(x=>x.v[0]==="temp"?"fievre":"constantes"); return r; }
+    return R("incomplet",{stage:"clinique"});
+  }
+  const badV = vit.filter(x=>x.v[4](x.n));
+  if(badV.length){ const r=R("urgence",{reasons:badV.map(x=>`${x.v[1]} : ${String(x.n).replace(".",",")} ${x.v[2]}`)}); r.items[2]=[...new Set(badV.map(x=>x.v[0]==="temp"?"fievre":"constantes"))]; return r; }
+
+  if(S.allergie.fosfo==null || S.allergie.pivme==null) return R("incomplet",{stage:"antecedents"});
+
+  const b = buResult();
+  if(b==="pending") return R("incomplet",{stage:"bandelette"});
+  if(b==="refus") { const r=R("medecin",{reasons:["La patiente refuse la bandelette urinaire"]}); r.items[4].push("refus"); return r; }
+  if(b==="ininterpretable") { const r=R("medecin",{reasons:["Bandelette non réalisable ou non interprétable"], buDone:true, pee:10}); r.items[4].push("ininterp"); return r; }
+  const hem = bu.hematurie==="pos";
+  if(b==="neg"){
+    if(hem || bu.autre.trim()){ const r=R("medecin",{reasons:[hem?"Bandelette négative mais présence de sang (hématurie)":"Bandelette négative avec une autre anomalie : "+bu.autre.trim()], buDone:true, hematurie:hem, pee:10}); r.items[4].push("neg_hem"); return r; }
+    return R("negatif",{buDone:true, pee:10});
+  }
+  // positive
+  if(S.allergie.fosfo==="oui" && S.allergie.pivme==="oui"){
+    const r=R("medecin",{reasons:["Bandelette positive mais allergie à la fosfomycine et au pivmécillinam"], buDone:true, hematurie:hem, pee:10, ecbu:true}); r.items[4].push("allergie"); return r;
+  }
+  const atb = S.allergie.fosfo==="oui" ? "pivme" : "fosfo";
+  const r = R(atb, {atb, buDone:true, hematurie:hem, pee:15}); r.items[3]=atb; return r;
+}
+
+const OUTCOME = {
+  incomplet:{lv:"pending", label:"En cours d'évaluation"},
+  urgence:{lv:"urgent", label:"Consultation médicale en urgence"},
+  medecin:{lv:"refer", label:"Consultation médicale sous 24 h"},
+  negatif:{lv:"neg", label:"Bandelette négative · conseils"},
+  fosfo:{lv:"treat", label:"Fosfomycine trométamol 3 g"},
+  pivme:{lv:"treat", label:"Pivmécillinam 400 mg · 3 jours"},
+  ordo_pos:{lv:"treat", label:"Dispensation de l'antibiotique prescrit"},
+  ordo_neg:{lv:"neg", label:"Pas de dispensation · informer le prescripteur"},
+  ordo_impossible:{lv:"refer", label:"Contacter le médecin prescripteur"}
+};
+
+/* ------------------------------------------------------------------ *
+ *  Composants
+ * ------------------------------------------------------------------ */
+function seg(key, opts, {bad=null, ok=null, rerender=false, aria=""}={}){
+  const v = get(key);
+  const i = opts.findIndex(o=>o[0]===v);
+  const tone = v==null ? "" : (v===bad ? "bad" : (v===ok ? "ok" : ""));
+  const id = key.replace(/\./g,"-");
+  return `<div class="seg" role="radiogroup" aria-label="${esc(aria)}" data-n="${opts.length}" data-i="${i<0?"":i}" data-tone="${tone}" data-bad="${bad??""}" data-ok="${ok??""}">
+    ${opts.map((o,j)=>`<input type="radio" id="${id}-${o[0]}" name="${id}" value="${o[0]}" data-k="${key}" ${rerender?'data-rr="1"':""} ${v===o[0]?"checked":""}><label for="${id}-${o[0]}">${o[1]}</label>`).join("")}
+    <span class="seg-knob"></span></div>`;
+}
+const YN = [["oui","Oui"],["non","Non"]];
+function q(key,label,hint,segOpts={bad:"oui"}, opts=YN){
+  const v = get(key);
+  const isBad = segOpts.bad!=null && v===segOpts.bad;
+  return `<div class="q" data-bad="${isBad?1:0}"><div class="q-text"><div class="q-label">${esc(label)}</div>${hint?`<div class="q-hint">${esc(hint)}</div>`:""}</div>${seg(key,opts,{...segOpts,aria:label})}</div>`;
+}
+function field(key,label,{type="text",wide=false,ph="",attrs="",unit="",area=false,pharma=false}={}){
+  const id = (pharma?"ph-":"f-")+key.replace(/\./g,"-");
+  const val = pharma ? P[key] : get(key);
+  const input = area
+    ? `<textarea id="${id}" ${pharma?`data-p="${key}"`:`data-k="${key}"`} placeholder="${esc(ph)}" rows="2">${esc(val)}</textarea>`
+    : `<input id="${id}" type="${type}" ${pharma?`data-p="${key}"`:`data-k="${key}"`} value="${esc(val)}" placeholder="${esc(ph)}" ${attrs}>`;
+  return `<div class="field${wide?" wide":""}"><label for="${id}">${esc(label)}</label>${unit?`<div class="field-row">${input}<span class="unit">${unit}</span></div>`:input}</div>`;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Étapes
+ * ------------------------------------------------------------------ */
+const ICON = {
+  alert:`<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>`,
+  doc:`<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`,
+  pill:`<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>`,
+  check:`<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>`
+};
+
+function stepBody(id){
+  switch(id){
+  case "patiente": {
+    const age = num(S.age);
+    const ageBadge = age===null ? "" : (S.circuit==="spontanee" ? ((age<16||age>65) ? `<span class="badge bad">Hors protocole : 16 à 65 ans</span>` : `<span class="badge ok">Âge éligible</span>`) : (age<16 ? `<span class="badge bad">Moins de 16 ans</span>`:`<span class="badge ok">16 ans et plus</span>`));
+    return `
+    <div class="panel card">
+      <div class="panel-title">Circuit de prise en charge</div>
+      ${q("circuit","Comment la patiente arrive-t-elle ?", S.circuit==="orientee" ? "Ordonnance de dispensation conditionnelle « si BU+ » d'un médecin ou d'une sage-femme" : "Patiente qui se présente spontanément : protocole complet d'éligibilité", {rerender:true}, [["spontanee","Spontanée"],["orientee","Avec ordonnance"]])}
+    </div>
+    <div class="panel card">
+      <div class="panel-title">Identité <span id="age-badge">${ageBadge}</span></div>
+      <div class="fields">
+        ${field("nom","Nom",{ph:"Nom de naissance",attrs:'autocomplete="off"'})}
+        ${field("prenom","Prénom",{attrs:'autocomplete="off"'})}
+        ${field("age","Âge",{type:"number",attrs:'min="0" max="120" inputmode="numeric"',unit:"ans"})}
+        ${field("nir","N° de sécurité sociale",{ph:"1 23 45 67 890 123 45",attrs:'inputmode="numeric" autocomplete="off"'})}
+        ${field("medecin","Médecin traitant",{wide:true,ph:S.circuit==="orientee"?"Prescripteur de l'ordonnance conditionnelle":"Dr …"})}
+      </div>
+      ${q("consent","Consentement de la patiente","Accepte la prise en charge, le partage des informations avec son médecin traitant et l'enregistrement du compte rendu dans son DMP",{bad:"non",ok:"oui",rerender:true})}
+    </div>
+    <details class="pharma card" ${P.nom?"":"open"}>
+      <summary><span>Pharmacie et pharmacien</span><span class="badge ${P.nom?"ok":"calm"}">${P.nom?esc(P.nom):"à renseigner une fois"}</span></summary>
+      <div class="fields">
+        ${field("nom","Nom de la pharmacie",{pharma:true})}
+        ${field("pharmacien","Pharmacien",{pharma:true,ph:"Prénom NOM"})}
+        ${field("adresse","Adresse",{pharma:true,wide:true})}
+        ${field("tel","Téléphone",{pharma:true,type:"tel"})}
+        ${field("rpps","N° RPPS",{pharma:true,attrs:'inputmode="numeric"'})}
+      </div>
+    </details>`;
+  }
+  case "symptomes":
+    return `<div class="panel card">
+      <div class="panel-title">Signes fonctionnels urinaires <span class="badge calm">au moins un</span></div>
+      ${SYMPT.map(s=>q("sympt."+s[0],s[1],s[2],{ok:"oui"})).join("")}
+    </div>
+    <div class="panel card">
+      ${q("sympt.recent","Apparition récente ?","Début des symptômes depuis quelques heures à quelques jours",{bad:"non",ok:"oui"})}
+    </div>`;
+  case "urgence":
+    return `<div class="panel card">
+      <div class="panel-title">Interrogatoire <span class="badge bad">oui = urgence</span></div>
+      ${URG.map(u=>q("urg."+u[0],u[1],u[2],{bad:"oui",ok:"non"})).join("")}
+    </div>`;
+  case "exclusion":
+    return `<div class="panel card">
+      <div class="panel-title">Antécédents et situation <span class="badge bad">oui = médecin sous 24 h</span></div>
+      ${EXCL.map(e=>q("excl."+e[0],e[1],e[2],{bad:"oui",ok:"non"})).join("")}
+    </div>`;
+  case "clinique":
+    return `<div class="panel card">
+      <div class="panel-title">Constantes mesurées à l'officine</div>
+      <div class="fields">
+        ${VITALS.map(v=>{
+          const n = num(S.clin[v[0]]);
+          const flag = n===null ? `<span class="vital-flag" data-flag="${v[0]}">seuil ${v[5]}</span>` : (v[4](n) ? `<span class="vital-flag bad" data-flag="${v[0]}">hors seuil · ${v[5]}</span>` : `<span class="vital-flag ok" data-flag="${v[0]}">normal</span>`);
+          return `<div class="field"><label for="f-clin-${v[0]}">${v[1]}</label><div class="field-row"><input id="f-clin-${v[0]}" type="number" step="${v[8]}" min="${v[6]}" max="${v[7]}" inputmode="decimal" data-k="clin.${v[0]}" value="${esc(S.clin[v[0]])}"><span class="unit">${v[2]}</span></div>${flag}</div>`;
+        }).join("")}
+      </div>
+    </div>`;
+  case "antecedents":
+    return `<div class="panel card">
+      <div class="panel-title">Allergies et contre-indications aux antibiotiques du protocole</div>
+      ${q("allergie.fosfo","Allergie ou contre-indication à la fosfomycine ?","1re intention",{bad:"oui",ok:"non"})}
+      ${q("allergie.pivme","Allergie ou contre-indication au pivmécillinam ?","2e intention (pénicilline)",{bad:"oui",ok:"non"})}
+    </div>
+    <div class="panel card">
+      <div class="panel-title">Questions à poser et à reporter dans le compte rendu</div>
+      <div class="fields">
+        ${field("hist.maladies","Maladies ou interventions chirurgicales, actuelles ou passées",{area:true,wide:true})}
+        ${field("hist.allergies","Autres allergies ou intolérances médicamenteuses",{area:true})}
+        ${field("hist.traitements","Traitements prescrits actuellement",{area:true})}
+        ${field("hist.evenement","Événement de santé marquant depuis un an",{area:true})}
+        ${field("hist.autre","Autre point signalé par la patiente",{area:true})}
+      </div>
+    </div>`;
+  case "bandelette": {
+    const b = S.bu;
+    let out = `<div class="panel card">
+      ${q("bu.accord","Accord de la patiente pour la bandelette ?","",{bad:"non",ok:"oui",rerender:true})}
+    </div>`;
+    if(b.accord==="oui"){
+      out += `<div class="notice calm"><div><b>Réalisation</b><ol>
+        <li>Toilette intime, puis recueil d'urine de milieu de jet dans un flacon propre.</li>
+        <li>Tremper brièvement la bandelette, éliminer l'excès d'urine sur le bord.</li>
+        <li>Lire au temps indiqué par le fabricant, en comparant à l'échelle colorimétrique.</li>
+      </ol></div></div>
+      <div class="panel card">
+        ${q("bu.realisable","Test interprétable ?","",{bad:"non",ok:"oui",rerender:true},[["oui","Oui"],["non","Non"]])}
+      </div>`;
+      if(b.realisable==="oui"){
+        const PN=[["pos","Positif"],["neg","Négatif"]];
+        out += `<div class="panel card">
+          <div class="panel-title">Lecture <span class="badge calm">leucocytes OU nitrites positifs = BU positive</span></div>
+          ${q("bu.leuco","Leucocytes","",{ok:"neg",bad:"pos",rerender:true},PN)}
+          ${q("bu.nitrites","Nitrites","",{ok:"neg",bad:"pos",rerender:true},PN)}
+          ${q("bu.hematurie","Sang (hématurie)","Si présent : rendez-vous médical systématique, même si la cystite guérit",{ok:"neg",bad:"pos",rerender:true},PN)}
+          <div class="fields">${field("bu.autre","Autre anomalie observée (facultatif)",{wide:true,ph:"Protéines, glucose…"})}</div>
+        </div>`;
+        if(S.circuit==="orientee"){
+          out += `<div class="panel card"><div class="fields"><div class="field wide"><label for="f-ordoAtb">Antibiotique inscrit sur l'ordonnance conditionnelle</label>
+            <select id="f-ordoAtb" data-k="ordoAtb" data-rr="1">
+              <option value="fosfo" ${S.ordoAtb==="fosfo"?"selected":""}>Fosfomycine trométamol 3 g</option>
+              <option value="pivme" ${S.ordoAtb==="pivme"?"selected":""}>Pivmécillinam 400 mg</option>
+              <option value="autre" ${S.ordoAtb==="autre"?"selected":""}>Autre antibiotique (selon l'ordonnance)</option>
+            </select></div></div></div>`;
+        }
+      }
+    }
+    return out;
+  }
+  case "resultat": return resultBody();
+  }
+}
+
+function resultBody(){
+  const d = decide();
+  if(d.code==="incomplet"){
+    const st = STEPS.find(s=>s.id===d.stage);
+    return `<div class="notice calm"><div><b>Questionnaire incomplet.</b> Il manque des réponses à l'étape « ${esc(st.label)} ».</div></div>
+      <div><button class="btn btn-dark" data-go="${d.stage}" type="button">Reprendre à l'étape ${esc(st.label)}</button></div>`;
+  }
+  ensureProducts(d);
+  const o = OUTCOME[d.code];
+  const icon = o.lv==="urgent"?ICON.alert:o.lv==="treat"?ICON.pill:o.lv==="neg"?ICON.check:ICON.doc;
+  const sub = heroSub(d);
+  const todo = pharmacistTodo(d);
+  return `
+  <div class="hero lv-${o.lv}">
+    <div class="hero-icon">${icon}</div>
+    <div><span class="mono" style="font-size:12px;opacity:.8">${esc(decisionTag(d))}</span><h3>${esc(o.label)}</h3><p>${sub}</p></div>
+  </div>
+  ${d.hematurie && d.code!=="medecin" ? `<div class="notice bad"><div><b>Sang détecté dans les urines.</b> Rendez-vous médical systématique à prévoir, même si l'épisode de cystite se résout.</div></div>`:""}
+  <div class="panel card">
+    <div class="panel-title">À faire au comptoir</div>
+    <ul class="todo">${todo.map((t,i)=>`<li><input type="checkbox" id="todo-${i}"><label for="todo-${i}">${t}</label></li>`).join("")}</ul>
+  </div>
+  ${d.buDone ? `<div class="panel card"><div class="panel-title">Facturation</div>
+    <div class="billing"><div><small>Code acte</small><b class="mono">PEE</b></div><div><small>Montant TTC (métropole)</small><b>${d.pee} €</b></div><div><small>DROM</small><b>${d.pee===15?"15,75":"10,50"} €</b></div></div></div>`:""}
+  ${d.code!=="urgence" ? `<div class="panel card">
+    <div class="panel-title">Produits conseillés à reporter sur la fiche <span class="badge calm">${S.products.size} choisi${S.products.size>1?"s":""}</span></div>
+    <div class="prods">${PRODUCTS.map(p=>`<label class="prod" for="pr-${p.id}"><input type="checkbox" id="pr-${p.id}" data-prod="${p.id}" ${S.products.has(p.id)?"checked":""}><span class="chk"></span><span><b>${esc(p.name)}</b><span class="r">${esc(p.role)}</span></span></label>`).join("")}</div>
+    ${S.custom.map((c,i)=>`<div class="notice"><div style="flex:1"><b>${esc(c.name)}</b> · ${esc(c.poso)}</div><button class="btn btn-ghost" data-rmcustom="${i}" type="button">Retirer</button></div>`).join("")}
+    <div class="custom-row">
+      <div class="field"><label for="c-name">Autre produit</label><input id="c-name" placeholder="Nom"></div>
+      <div class="field"><label for="c-poso">Posologie</label><input id="c-poso" placeholder="ex. 1 sachet le soir pendant 10 jours"></div>
+      <button class="btn btn-soft" id="c-add" type="button">Ajouter</button>
+    </div>
+  </div>`:""}
+  <div class="panel card">
+    <div class="panel-title">Points divers</div>
+    <div class="fields">
+      ${field("notes","Message du pharmacien (compte rendu et fiche patiente)",{area:true,wide:true,ph:"ex. Patiente informée, rappel prévu à 48 h…"})}
+    </div>
+    ${q("noteOnFiche","Afficher ce message sur la fiche patiente ?","",{ok:"oui"},[["oui","Oui"],["non","Non"]])}
+  </div>
+  <div class="panel card" id="docs-panel">
+    <div class="doc-bar">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" data-tab="fiche" class="${docTab==="fiche"?"on":""}">Fiche patiente</button>
+        <button type="button" role="tab" data-tab="cr" class="${docTab==="cr"?"on":""}">Compte rendu DMP</button>
+      </div>
+      <div class="doc-actions">
+        <button class="btn btn-soft" id="btn-print" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>Imprimer</button>
+        <button class="btn btn-dark" id="btn-pdf" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Télécharger le PDF</button>
+      </div>
+    </div>
+    <div class="preview"><div class="preview-inner" id="preview"></div></div>
+  </div>`;
+}
+
+function decisionTag(d){
+  const b = S.bu;
+  if(!d.buDone) return "BU non réalisée";
+  if(b.realisable==="non") return "BU non interprétable";
+  return `BU · leucocytes ${b.leuco==="pos"?"+":"−"} · nitrites ${b.nitrites==="pos"?"+":"−"} · sang ${b.hematurie==="pos"?"+":"−"}`;
+}
+function heroSub(d){
+  switch(d.code){
+    case "urgence": return "Adresser la patiente à un médecin en urgence ou vers une structure d'urgence. Motif : "+esc(d.reasons.join(" · "));
+    case "medecin": return "La prise en charge à l'officine n'est pas possible. Motif : "+esc(d.reasons.join(" · "))+(d.ecbu?" · Remettre une demande d'ECBU au médecin.":"");
+    case "negatif": return "Pas d'antibiotique. Conseils remis ; consulter un médecin si les symptômes persistent ou s'aggravent dans les 24 à 48 h.";
+    case "fosfo": return "1re intention : un sachet de 3 g en une prise unique.";
+    case "pivme": return "Allergie à la fosfomycine : 400 mg matin et soir pendant 3 jours.";
+    case "ordo_pos": return "Délivrer l'antibiotique en regard de la mention « si test urinaire positif » et informer le prescripteur.";
+    case "ordo_neg": return "Ne pas délivrer l'antibiotique conditionnel et informer le prescripteur."+(d.hematurie?" Sang détecté : rendez-vous médical à prévoir.":"");
+    case "ordo_impossible": return "Contacter le médecin prescripteur. Motif : "+esc(d.reasons.join(" · "));
+  }
+  return "";
+}
+function pharmacistTodo(d){
+  const t = [];
+  const med = S.medecin.trim() ? esc(S.medecin.trim()) : "le médecin traitant";
+  if(d.code==="urgence") t.push("Orienter immédiatement vers un médecin ou une structure d'urgence (organisation territoriale). Appeler le 15 si l'état le justifie.");
+  if(d.code==="medecin") t.push(`Orienter vers ${med} pour une consultation dans les 24 h.`);
+  if(d.code==="ordo_impossible") t.push(`Contacter ${med} : la réalisation de la BU ou la dispensation n'est pas possible.`);
+  if(d.ecbu) t.push("Allergie aux deux antibiotiques : la patiente part avec une demande d'ECBU pour le médecin.");
+  if(d.code==="fosfo") t.push("Délivrer <b>Fosfomycine trométamol 3 g</b> : 1 sachet, prise unique.");
+  if(d.code==="pivme") t.push("Délivrer <b>Pivmécillinam 400 mg</b> : 1 prise matin et soir pendant 3 jours (6 prises).");
+  if(d.code==="fosfo"||d.code==="pivme") t.push("Compléter le bon de prise en charge (amelipro) et le joindre à la facture, votre n° d'identification en zones prescripteur et exécutant.");
+  if(d.code==="ordo_pos") t.push("Délivrer l'antibiotique en regard de la mention « si test urinaire positif » et en informer le prescripteur.");
+  if(d.code==="ordo_neg") t.push("Ne pas délivrer l'antibiotique conditionnel ; informer le prescripteur du résultat.");
+  if(d.hematurie && d.code!=="medecin") t.push("Sang dans les urines : conseiller un rendez-vous médical systématique.");
+  if(d.buDone) t.push(`Facturer l'acte PEE (${d.pee} € TTC), date d'exécution = date du test.`);
+  t.push("Remettre la fiche patiente imprimée et expliquer les signes qui doivent faire reconsulter.");
+  t.push("Enregistrer le compte rendu dans le DMP de la patiente.");
+  return t;
+}
+function ensureProducts(d){
+  if(S.products && S._prodFor===d.code) return;
+  if(S.products && S._prodTouched) { S._prodFor=d.code; return; }
+  const def = {
+    fosfo:["paracetamol","canneberge","intime"],
+    pivme:["paracetamol","probiotiques","canneberge","intime"],
+    ordo_pos:["paracetamol","canneberge","intime"],
+    negatif:["paracetamol","phloroglucinol","intime"],
+    ordo_neg:["paracetamol","intime"],
+    medecin:["paracetamol"],
+    ordo_impossible:["paracetamol"],
+    urgence:[]
+  }[d.code] || [];
+  S.products = new Set(def); S._prodFor = d.code;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Validation d'étape
+ * ------------------------------------------------------------------ */
+function missingFor(id){
+  const m=[];
+  if(id==="patiente"){
+    if(!S.nom.trim()) m.push("nom"); if(!S.prenom.trim()) m.push("prénom");
+    if(num(S.age)===null) m.push("âge"); if(S.consent==null) m.push("consentement");
+  }
+  if(id==="symptomes") { if(Object.values(S.sympt).some(v=>v==null)) m.push("toutes les questions"); }
+  if(id==="urgence") { if(URG.some(u=>S.urg[u[0]]==null)) m.push("toutes les questions"); }
+  if(id==="exclusion") { if(EXCL.some(e=>S.excl[e[0]]==null)) m.push("tous les critères"); }
+  if(id==="clinique") { VITALS.forEach(v=>{ if(num(S.clin[v[0]])===null) m.push(v[1].toLowerCase()); }); }
+  if(id==="antecedents") { if(S.allergie.fosfo==null||S.allergie.pivme==null) m.push("les deux allergies"); }
+  if(id==="bandelette") {
+    const b=S.bu;
+    if(b.accord==null) m.push("accord de la patiente");
+    else if(b.accord==="oui"){
+      if(b.realisable==null) m.push("interprétabilité du test");
+      else if(b.realisable==="oui"){ if(b.leuco==null) m.push("leucocytes"); if(b.nitrites==null) m.push("nitrites"); if(b.hematurie==null) m.push("sang"); }
+    }
+  }
+  return m;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Rendu
+ * ------------------------------------------------------------------ */
+function render(focusId){
+  const steps = active();
+  if(!steps.some(s=>s.id===cur)) cur = "patiente";
+  const st = STEPS.find(s=>s.id===cur);
+  const idx = steps.findIndex(s=>s.id===cur);
+  const missing = cur==="resultat" ? [] : missingFor(cur);
+  const d = decide();
+  const ends = cur!=="resultat" && missing.length===0 && d.code!=="incomplet";
+  $("#main").innerHTML = `
+    <div class="step-head"><span class="tag" style="align-self:flex-start">${esc(st.tag)}</span><h2>${esc(st.title)}</h2><p>${esc(st.intro)}</p></div>
+    ${stepBody(cur)}
+    ${ends && d.code!=="negatif" && !["fosfo","pivme","ordo_pos","ordo_neg"].includes(d.code) ? `<div class="notice ${OUTCOME[d.code].lv==="urgent"?"bad":"focus"}"><div><b>${esc(OUTCOME[d.code].label)}.</b> ${esc(d.reasons.join(" · "))}. Le questionnaire s'arrête ici : passez au résultat pour éditer les documents.</div></div>`:""}
+    ${cur!=="resultat" ? `<div class="nav">
+      <button class="btn btn-ghost" id="btn-prev" type="button" ${idx===0?"hidden":""}>← Précédent</button>
+      <span id="missing-slot"></span>
+      <button class="btn btn-dark" id="btn-next" type="button">${ends?"Voir le résultat":"Continuer"} →</button>
+    </div>` : `<div class="nav"><button class="btn btn-ghost" id="btn-prev" type="button">← Modifier les réponses</button></div>`}`;
+  renderRail(); renderSummary();
+  if(cur==="resultat" && d.code!=="incomplet") renderDocs();
+  if(focusId){ const el=document.getElementById(focusId); if(el) el.focus({preventScroll:true}); }
+}
+
+function renderRail(){
+  const steps = active();
+  const curIdx = steps.findIndex(s=>s.id===cur);
+  $("#steps").innerHTML = steps.map((s,i)=>{
+    const done = visited.has(s.id) && i<curIdx;
+    return `<li><button type="button" data-go="${s.id}" class="${s.id===cur?"on":""} ${done?"done":""}" ${visited.has(s.id)?"":"disabled"} aria-current="${s.id===cur?"step":"false"}"><span class="dot">${done?"✓":i+1}</span><span class="lbl">${esc(s.label)}</span></button></li>`;
+  }).join("");
+  const pct = Math.round((curIdx)/(steps.length-1)*100);
+  $("#dial-num").textContent = pct+"%";
+  $("#dial-arc").style.strokeDashoffset = 301.6*(1-pct/100);
+  $("#dial-knob").style.transform = `rotate(${pct*3.6}deg)`;
+}
+
+function renderSummary(){
+  const d = decide();
+  const o = OUTCOME[d.code];
+  const age = num(S.age);
+  const symN = SYMPT.filter(s=>S.sympt[s[0]]==="oui").length;
+  const symAns = Object.values(S.sympt).some(v=>v!=null);
+  const urgN = URG.filter(u=>S.urg[u[0]]==="oui").length + VITALS.filter(v=>{const n=num(S.clin[v[0]]);return n!==null&&v[4](n);}).length;
+  const urgAns = URG.some(u=>S.urg[u[0]]!=null) || VITALS.some(v=>num(S.clin[v[0]])!==null);
+  const exN = EXCL.filter(e=>S.excl[e[0]]==="oui").length;
+  const exAns = EXCL.some(e=>S.excl[e[0]]!=null);
+  const b = S.bu;
+  const buTxt = b.accord==="non"?"Refusée":b.realisable==="non"?"Non interprétable":(b.leuco&&b.nitrites)?((b.leuco==="pos"||b.nitrites==="pos")?"Positive":"Négative"):"—";
+  const buRing = buTxt==="Positive"?"calm":buTxt==="Négative"?"ok":(buTxt==="—"?"":"bad");
+  const item = (label,val,ring) => `<div class="sum-item"><div><small>${label}</small><strong>${val}</strong></div><span class="ring ${ring}"></span></div>`;
+  const rows = [
+    item("Patiente", S.prenom||S.nom ? esc(fullName())+(age!==null?`, ${age} ans`:"") : "—", (S.nom&&age!==null)?((S.circuit==="spontanee"&&(age<16||age>65))?"bad":"ok"):(S.nom||S.age?"half":""))
+  ];
+  if(S.circuit==="spontanee"){
+    rows.push(item("Symptômes", symAns?`${symN} sur 4${S.sympt.recent==="oui"?", récents":S.sympt.recent==="non"?", non récents":""}`:"—", symAns?(symN?"calm":"bad"):""));
+    rows.push(item("Gravité", urgAns?(urgN?`${urgN} signe${urgN>1?"s":""} d'alerte`:"Aucun signe"):"—", urgAns?(urgN?"bad":"ok"):""));
+    rows.push(item("Exclusions", exAns?(exN?`${exN} critère${exN>1?"s":""}`:"Aucune"):"—", exAns?(exN?"bad":"ok"):""));
+  } else {
+    rows.push(item("Circuit","Ordonnance « si BU+ »","calm"));
+  }
+  rows.push(item("Bandelette", buTxt, buRing));
+  $("#summary").innerHTML = rows.join("") + `<div class="decision lv-${o.lv}" style="margin-top:4px"><small>décision</small><strong>${esc(o.label)}</strong></div>`;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Documents
+ * ------------------------------------------------------------------ */
+const TIP_ICON = {
+  drop:`<path d="M12 3c3.5 4.4 6 7.7 6 11a6 6 0 1 1-12 0c0-3.3 2.5-6.6 6-11Z"/>`,
+  clock:`<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>`,
+  circle:`<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>`,
+  arrow:`<path d="M5 12h14M13 6l6 6-6 6"/>`,
+  heart:`<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/>`,
+  no:`<circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/>`,
+  leaf:`<path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14Z"/><path d="M5 19 13 11"/>`,
+  shirt:`<path d="M8 4 4 7l2 3 2-1v11h8V9l2 1 2-3-4-3c0 2-1.5 3-4 3S8 6 8 4Z"/>`
+};
+const tipSvg = k => `<svg viewBox="0 0 24 24" fill="none" stroke="#E8913F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${TIP_ICON[k]}</svg>`;
+
+function pageHead(tag){
+  return `<div class="p-head">
+    <div class="p-pharma"><b>${esc(P.nom||"Pharmacie")}</b>${P.adresse?`<span>${esc(P.adresse)}</span>`:""}${P.tel?`<span>Tél. ${esc(P.tel)}</span>`:""}</div>
+    <div class="p-right"><span class="p-tag">${esc(tag)}</span><span>${esc(dateFR)}</span></div>
+  </div>`;
+}
+function pageFoot(n,total,extra=""){
+  return `<div class="p-foot"><div>${extra||`Pharmacien : <b style="color:#22201C">${esc(P.pharmacien||"—")}</b>${P.tel?` · Une question ? Appelez-nous au ${esc(P.tel)}`:""}`}</div><div class="p-mono">${n}/${total}</div></div>`;
+}
+function selectedProducts(){
+  return [...PRODUCTS.filter(p=>S.products && S.products.has(p.id)), ...S.custom.map(c=>({name:c.name, role:"Conseillé par votre pharmacien", poso:c.poso}))];
+}
+function buChips(){
+  const b=S.bu; if(b.accord!=="oui"||b.realisable!=="oui") return "";
+  const c=(l,v)=>`<div class="p-res"><i class="${v==="pos"?"pos":"neg"}">${v==="pos"?"+":"−"}</i>${l} ${v==="pos"?"positif":"négatif"}</div>`;
+  return `<div class="p-results">${c("Leucocytes",b.leuco)}${c("Nitrites",b.nitrites)}${c("Sang",b.hematurie)}</div>`;
+}
+function rxBlock(atb){
+  if(atb==="fosfo") return `<div class="p-rx">
+    <div class="p-rx-top"><div><small>votre antibiotique</small><div class="p-rx-name">Fosfomycine trométamol</div><div class="p-rx-dose">1 sachet de 3 g · une seule prise</div></div>
+      <div class="p-rx-big"><b>1</b><span>prise unique,<br>ce soir</span></div></div>
+    <div class="p-steps">
+      <div class="p-step"><i>1</i><b>Videz votre vessie</b>Allez aux toilettes juste avant la prise.</div>
+      <div class="p-step"><i>2</i><b>Dissolvez le sachet</b>Dans un demi-verre d'eau, buvez aussitôt.</div>
+      <div class="p-step"><i>3</i><b>Au coucher, à jeun</b>2 à 3 h après le repas, de préférence le soir.</div>
+    </div>
+    <ul class="p-rules"><li>Le traitement est complet en une seule prise : ne reprenez pas de sachet.</li><li>Les brûlures peuvent persister 2 à 3 jours : c'est normal, la guérison est progressive.</li></ul>
+  </div>`;
+  if(atb==="pivme") return `<div class="p-rx">
+    <div class="p-rx-top"><div><small>votre antibiotique</small><div class="p-rx-name">Pivmécillinam 400 mg</div><div class="p-rx-dose">1 prise matin et soir · pendant 3 jours</div></div>
+      <div class="p-rx-big"><b>6</b><span>prises en<br>3 jours</span></div></div>
+    <table class="p-grid"><thead><tr><th></th><th>Jour 1</th><th>Jour 2</th><th>Jour 3</th></tr></thead><tbody>
+      <tr><td>Matin · 400 mg</td><td><span class="p-box"></span>au repas</td><td><span class="p-box"></span>au repas</td><td><span class="p-box"></span>au repas</td></tr>
+      <tr><td>Soir · 400 mg</td><td><span class="p-box"></span>au repas</td><td><span class="p-box"></span>au repas</td><td><span class="p-box"></span>au repas</td></tr>
+    </tbody></table>
+    <ul class="p-rules"><li>Avalez pendant le repas avec un grand verre d'eau, assise ou debout ; ne vous allongez pas juste après.</li><li>Allez jusqu'au bout des 3 jours, même si les symptômes disparaissent avant.</li><li>Cochez chaque case au fur et à mesure pour ne pas oublier de prise.</li></ul>
+  </div>`;
+  return `<div class="p-rx"><div><small class="p-mono" style="font-size:8pt;color:#8A4712;text-transform:uppercase;letter-spacing:.08em">votre antibiotique</small><div class="p-rx-name">Selon l'ordonnance de votre médecin</div><div class="p-rx-dose">Respectez la posologie indiquée sur l'ordonnance et la boîte.</div></div></div>`;
+}
+const CONSULT_RULES = [
+  "Fièvre, frissons, douleur dans le dos ou sur les côtés, nausées ou vomissements",
+  "Symptômes qui persistent ou s'aggravent 48 h après le début du traitement",
+  "Nouveaux symptômes ou fatigue inhabituelle dans les 24 h",
+  "Sang dans les urines après le traitement",
+  "Démangeaisons, éruption, gonflement : signes possibles d'allergie au traitement"
+];
+
+function buildFiche(d){
+  const name = fullName();
+  const total = d.code==="urgence" ? 1 : 2;
+  const prods = selectedProducts();
+  const note = S.noteOnFiche==="oui" && S.notes.trim() ? `<div class="p-msg"><b style="display:block;margin-bottom:1mm">Message de votre pharmacien</b>${esc(S.notes.trim())}</div>` : "";
+  let title="", lead="", body="";
+  const treat = ["fosfo","pivme","ordo_pos"].includes(d.code);
+  if(treat){
+    title = "Votre test urinaire est positif";
+    lead = "Le test réalisé à la pharmacie confirme une infection urinaire simple (cystite). Voici votre traitement et comment le prendre.";
+    body = buChips() + rxBlock(d.code==="ordo_pos" ? S.ordoAtb : d.atb)
+      + (d.hematurie?`<div class="p-card alert"><h2>Prenez rendez-vous avec votre médecin</h2>Du sang a été détecté dans vos urines. Un contrôle médical est nécessaire, même si la cystite guérit.</div>`:"")
+      + `<div class="p-card alert"><h2>Consultez rapidement un médecin si</h2><ul class="p-rules">${CONSULT_RULES.map(r=>`<li>${r}</li>`).join("")}</ul></div>`;
+  } else if(d.code==="negatif" || d.code==="ordo_neg"){
+    title = "Votre test urinaire est négatif";
+    lead = "Le test ne montre pas d'infection bactérienne : aucun antibiotique n'est nécessaire. Vos symptômes peuvent venir d'une irritation passagère.";
+    body = buChips()
+      + (d.hematurie?`<div class="p-card alert"><h2>Prenez rendez-vous avec votre médecin</h2>Du sang a été détecté dans vos urines. Un contrôle médical est nécessaire.</div>`:"")
+      + `<div class="p-card focus"><h2>Pour vous soulager</h2><ul class="p-rules"><li>Buvez abondamment : au moins 1,5 L d'eau par jour, réparti dans la journée.</li><li>Urinez dès que l'envie se présente, sans vous retenir.</li><li>Utilisez les produits conseillés par votre pharmacien (page 2).</li></ul></div>`
+      + `<div class="p-card alert"><h2>Consultez un médecin si</h2><ul class="p-rules"><li>Les symptômes persistent ou s'aggravent dans les 24 à 48 h</li><li>Fièvre, frissons, douleur dans le dos ou sur les côtés, nausées ou vomissements</li><li>Sang dans les urines</li></ul></div>`;
+  } else if(d.code==="urgence"){
+    title = "Consultez un médecin dès aujourd'hui";
+    lead = "Certains signes nécessitent un examen médical rapide. Ils peuvent indiquer une infection qui remonte vers les reins.";
+    body = `<div class="p-banner urgent"><div class="p-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div><div><b>Rendez-vous chez un médecin ou dans un service d'urgence, sans attendre.</b>En cas de malaise, de forte fièvre ou d'aggravation rapide : appelez le 15.</div></div>
+      <div class="p-card"><h2>Pourquoi ?</h2><ul class="p-rules">${d.reasons.map(r=>`<li>${esc(r)}</li>`).join("")}</ul></div>
+      <div class="p-card focus"><h2>À montrer au médecin</h2>Présentez cette fiche. Votre pharmacien a enregistré un compte rendu dans votre Dossier Médical Partagé (DMP).</div>
+      <div class="p-card"><h2>En attendant</h2><ul class="p-rules"><li>Buvez régulièrement de l'eau.</li><li>Ne prenez pas d'antibiotique sans avis médical.</li></ul></div>`;
+  } else {
+    title = d.code==="ordo_impossible" ? "Votre médecin doit être recontacté" : "Consultez un médecin dans les 24 heures";
+    lead = "Votre situation nécessite l'avis d'un médecin : la pharmacie ne peut pas prendre en charge cette infection urinaire directement.";
+    body = buChips()
+      + `<div class="p-banner refer"><div class="p-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#34495B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div><b>Prenez rendez-vous${S.medecin.trim()?" avec "+esc(S.medecin.trim()):" avec votre médecin"} dans les 24 heures.</b>Présentez cette fiche lors de la consultation.</div></div>
+      <div class="p-card"><h2>Pourquoi ?</h2><ul class="p-rules">${d.reasons.map(r=>`<li>${esc(r)}</li>`).join("")}${d.ecbu?"<li>Un examen d'urine en laboratoire (ECBU) sera probablement demandé.</li>":""}</ul></div>
+      <div class="p-card alert"><h2>N'attendez pas et consultez en urgence si</h2><ul class="p-rules"><li>Fièvre, frissons ou sensation de grand froid</li><li>Douleur dans le dos ou sur les côtés</li><li>Nausées, vomissements, malaise</li></ul></div>`;
+  }
+  const p1 = `<div class="page">${pageHead("fiche conseil · infection urinaire")}
+    <div class="p-title"><small>${name?`Remise à Mme ${esc(name)}`:"Fiche patiente"}</small><h1>${title}</h1><p>${lead}</p></div>
+    ${body}
+    ${total===1?note:""}
+    ${pageFoot(1,total)}</div>`;
+  if(total===1) return p1;
+  const p2 = `<div class="page">${pageHead("prévention · produits conseillés")}
+    <div class="p-card"><h2>Pour éviter une nouvelle infection</h2><ul class="p-tips">${TIPS.map(t=>`<li>${tipSvg(t[0])}<span><b>${t[1]}</b>${t[2]?` · ${t[2]}`:""}</span></li>`).join("")}</ul></div>
+    ${prods.length?`<div><h2 style="margin:0 0 2mm;font-size:12pt">Produits conseillés par votre pharmacien</h2>
+      <table class="p-prod"><thead><tr><th>Produit</th><th>Comment l'utiliser</th></tr></thead><tbody>
+      ${prods.map(p=>`<tr><td><b>${esc(p.name)}</b><span>${esc(p.role)}</span></td><td>${esc(p.poso)}</td></tr>`).join("")}
+      </tbody></table></div>`:""}
+    ${note}
+    <div class="p-card focus" style="font-size:9.2pt">Ces produits ne remplacent pas un antibiotique. En cas de doute, demandez conseil à votre pharmacien ou à votre médecin.</div>
+    ${pageFoot(2,2)}</div>`;
+  return p1+p2;
+}
+
+function buildCR(d){
+  const on = b => b ? "on" : "";
+  const it = (checked,label) => `<div class="cr-it ${on(checked)}"><span class="cbx ${on(checked)}"></span><span>${label}</span></div>`;
+  const i1 = d.items[1], i2 = d.items[2];
+  const has1 = i1.length>0 || (d.code==="medecin" && !d.items[4].length), has2 = d.code==="urgence";
+  const has3 = !!d.items[3], has4 = d.items[4].length>0;
+  const blk = (n,onn,title,inner,cls="") => `<div class="cr-block"><div class="cr-block-h ${on(onn)}"><span class="cr-num">${n}</span><span class="cbx ${on(onn)}"></span>${title}</div><div class="cr-items ${cls}">${inner}</div></div>`;
+  const EX_CR = [["age","Âge < 16 ans ou > 65 ans"],...EXCL.map(e=>[e[0],e[1]+(e[2]?` (${e[2]})`:"")])];
+  const b = S.bu;
+  const pn = v => v==null?"—":v==="pos"?"Positif":"Négatif";
+  const yn = v => v==null?"—":v==="oui"?"Oui":"Non";
+  const vit = VITALS.map(v=>`${v[1]} : <b>${S.clin[v[0]]!==""?esc(String(S.clin[v[0]]).replace(".",","))+" "+v[2]:"non mesuré"}</b>`).join(" · ");
+  const prods = selectedProducts();
+  const symp = SYMPT.filter(s=>S.sympt[s[0]]==="oui").map(s=>s[1]).join(", ") || "Aucun";
+  const other = !has1 && !has2 && !has3 && !has4 && d.code!=="negatif" ? `<div class="cr-block"><div class="cr-block-h on">Autre décision</div><div style="padding:2.5mm 3.5mm;font-size:8.8pt">${esc(OUTCOME[d.code].label)}${d.reasons.length?" — "+esc(d.reasons.join(" · ")):""}</div></div>` : "";
+  const negBlock = d.code==="negatif" ? `<div class="cr-block"><div class="cr-block-h on"><span class="cbx on"></span>Bandelette négative aux leucocytes et aux nitrites, sans hématurie : pas d'antibiotique, conseils remis, consultation si persistance ou aggravation à 24-48 h.</div></div>` : "";
+
+  const page1 = `<div class="page">${pageHead("compte rendu · DMP")}
+    <div class="p-title"><h1 style="font-size:17pt">Compte rendu : prise en charge à l'officine de la cystite simple de la femme</h1>
+      <p style="font-size:9.2pt">Circuit : ${S.circuit==="orientee"?"patiente orientée avec ordonnance de dispensation conditionnelle « si BU+ »":"patiente se présentant spontanément à l'officine"} · test du ${esc(dateShort)}</p></div>
+    <div class="cr-id">
+      <div><small>Nom</small><b>${esc(S.nom.toUpperCase()||"—")}</b></div>
+      <div><small>Prénom</small><b>${esc(S.prenom||"—")}</b></div>
+      <div><small>Âge</small><b>${S.age!==""?esc(S.age)+" ans":"—"}</b></div>
+      <div><small>N° de sécurité sociale</small><b class="p-mono" style="font-size:8.6pt">${esc(S.nir||"—")}</b></div>
+      <div><small>Médecin traitant</small><b>${esc(S.medecin||"—")}</b></div>
+      <div><small>Consentement</small><b>${yn(S.consent)}</b></div>
+    </div>
+    ${negBlock}${other}
+    ${blk(1,has1,"Je lui ai conseillé de consulter son médecin dans les 24 h (critère ne permettant pas la prise en charge à l'officine)", EX_CR.map(e=>it(i1.includes(e[0]),esc(e[1]))).join("") + (has1 && !i1.length ? it(true,esc(d.reasons.join(" · "))) : ""))}
+    ${blk(2,has2,"Je l'ai adressée à un médecin en urgence (symptômes de gravité)", [
+      it(i2.includes("fievre"),"Fièvre > 38 °C, hypothermie < 36 °C ou frissons"),
+      it(i2.includes("constantes"),"PAS < 90 mmHg, FC > 110/min ou FR > 20/min"),
+      it(i2.includes("lombaire")||i2.includes("digestif"),"Douleur lombaire ou des flancs, vomissements, diarrhée, douleurs abdominales")
+    ].join(""),"three")}
+    ${blk(3,has3,"Je lui ai délivré un antibiotique conforme aux recommandations (BU positive aux leucocytes ou aux nitrites)", it(d.items[3]==="fosfo","Fosfomycine trométamol 3 g per os, prise unique") + it(d.items[3]==="pivme","Pivmécillinam 400 mg per os, 2 fois par jour pendant 3 jours"))}
+    ${blk(4,has4,"Je lui ai conseillé de consulter un médecin dans les 24 h", it(d.items[4].includes("neg_hem"),"BU négative aux leucocytes et aux nitrites mais hématurie ou autre anomalie") + it(d.items[4].includes("allergie"),"BU positive mais allergie ou contre-indication à la fosfomycine et au pivmécillinam") + it(d.items[4].includes("refus"),"Refus de la bandelette urinaire") + it(d.items[4].includes("ininterp"),"Bandelette non réalisable ou non interprétable"))}
+    ${pageFoot(1,2,`Compte rendu généré le ${esc(dateFR)} · à enregistrer dans le DMP de la patiente`)}</div>`;
+
+  const page2 = `<div class="page">${pageHead("compte rendu · détails")}
+    <div><h2 class="cr-h">Interrogatoire et examen</h2>
+    <table class="cr-table">
+      ${S.circuit==="spontanee"?`<tr><th>Symptômes</th><td>${esc(symp)} · apparition récente : ${yn(S.sympt.recent)}</td></tr>
+      <tr><th>Signes de gravité</th><td>${URG.map(u=>`${esc(u[1])} : ${yn(S.urg[u[0]])}`).join("<br>")}</td></tr>
+      <tr><th>Constantes</th><td>${vit}</td></tr>`:""}
+      <tr><th>Allergie fosfomycine / pivmécillinam</th><td>${yn(S.allergie.fosfo)} / ${yn(S.allergie.pivme)}</td></tr>
+      <tr><th>Bandelette urinaire</th><td>${b.accord==="non"?"Refusée par la patiente":b.accord==null?"Non réalisée":b.realisable==="non"?"Non interprétable":`Leucocytes : <b>${pn(b.leuco)}</b> · Nitrites : <b>${pn(b.nitrites)}</b> · Sang : <b>${pn(b.hematurie)}</b>${b.autre.trim()?" · Autre : "+esc(b.autre.trim()):""}`}</td></tr>
+      ${S.circuit==="orientee"?`<tr><th>Ordonnance conditionnelle</th><td>${{fosfo:"Fosfomycine trométamol 3 g",pivme:"Pivmécillinam 400 mg",autre:"Autre antibiotique"}[S.ordoAtb]} · ${d.code==="ordo_pos"?"délivré":"non délivré"}</td></tr>`:""}
+      <tr><th>Décision</th><td><b>${esc(OUTCOME[d.code].label)}</b>${d.reasons.length?" · "+esc(d.reasons.join(" · ")):""}${d.hematurie?" · Hématurie : rendez-vous médical conseillé":""}</td></tr>
+    </table></div>
+    <div><h2 class="cr-h">Questions complémentaires</h2>
+    <table class="cr-table">
+      <tr><th>Maladies ou interventions chirurgicales</th><td>${esc(S.hist.maladies)||"—"}</td></tr>
+      <tr><th>Allergies ou intolérances médicamenteuses</th><td>${esc(S.hist.allergies)||"—"}</td></tr>
+      <tr><th>Traitements en cours</th><td>${esc(S.hist.traitements)||"—"}</td></tr>
+      <tr><th>Événement de santé marquant depuis un an</th><td>${esc(S.hist.evenement)||"—"}</td></tr>
+      <tr><th>Autre point signalé</th><td>${esc(S.hist.autre)||"—"}</td></tr>
+    </table></div>
+    <div><h2 class="cr-h">Conseils et produits remis</h2>
+    <table class="cr-table"><tr><th>Fiche patiente</th><td>Remise (conseils de prévention et signes devant faire consulter)</td></tr>
+      <tr><th>Produits conseillés</th><td>${prods.length?prods.map(p=>esc(p.name)).join(", "):"Aucun"}</td></tr>
+      ${d.buDone?`<tr><th>Facturation</th><td>Acte PEE · ${d.pee} € TTC</td></tr>`:""}
+    </table></div>
+    <div class="p-msg" style="min-height:22mm"><b style="display:block;margin-bottom:1mm">Points divers</b>${esc(S.notes.trim())||""}</div>
+    <div style="display:flex;justify-content:space-between;gap:6mm;align-items:flex-end">
+      <div style="font-size:9pt"><b>${esc(P.pharmacien||"Pharmacien")}</b><br><span style="color:#6F685E">${esc(P.nom||"")}${P.rpps?" · RPPS "+esc(P.rpps):""}</span></div>
+      <div class="p-sign">Signature et cachet</div>
+    </div>
+    ${pageFoot(2,2,`Compte rendu généré le ${esc(dateFR)} · à enregistrer dans le DMP de la patiente`)}</div>`;
+  return page1+page2;
+}
+
+function currentDocHTML(){
+  const d = decide();
+  return docTab==="fiche" ? buildFiche(d) : buildCR(d);
+}
+function renderDocs(){
+  const pv = $("#preview"); if(!pv) return;
+  pv.innerHTML = currentDocHTML();
+  fitPreview();
+  document.querySelectorAll("[data-tab]").forEach(b=>b.classList.toggle("on", b.dataset.tab===docTab));
+}
+function fitPreview(){
+  const pv = $("#preview"); if(!pv) return;
+  const box = pv.parentElement;
+  const page = pv.querySelector(".page"); if(!page) return;
+  pv.style.zoom = 1;
+  const w = page.offsetWidth;
+  const avail = box.clientWidth - 28;
+  pv.style.zoom = Math.min(1, avail / w);
+}
+window.addEventListener("resize", ()=>{ if(cur==="resultat") fitPreview(); });
+
+function docFilename(){
+  const n = (S.nom.trim()||"patiente").toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Z0-9]+/g,"-");
+  const p = (S.prenom.trim()||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9]+/g,"-");
+  const dt = today.toISOString().slice(0,10);
+  return `${docTab==="fiche"?"Fiche-conseil-cystite":"Compte-rendu-cystite-DMP"}_${n}${p?"_"+p:""}_${dt}.pdf`;
+}
+function printDoc(){
+  const root = $("#print-root");
+  root.innerHTML = currentDocHTML();
+  setTimeout(()=>window.print(), 60);
+}
+window.addEventListener("afterprint", ()=>{ $("#print-root").innerHTML=""; });
+
+async function downloadPDF(){
+  if(!window.html2pdf){ toast("Bibliothèque PDF indisponible (hors ligne) : choisissez « Enregistrer au format PDF » dans la fenêtre d'impression."); printDoc(); return; }
+  const btn = $("#btn-pdf"); btn.disabled = true; const label = btn.innerHTML; btn.textContent = "Génération…";
+  const holder = document.createElement("div");
+  holder.style.cssText = "position:fixed;left:-10000px;top:0;width:210mm;";
+  holder.innerHTML = currentDocHTML();
+  document.body.appendChild(holder);
+  const pages = [...holder.querySelectorAll(".page")];
+  pages.forEach(p=>p.style.height="296mm"); // évite une page blanche due aux arrondis du rendu
+  const opt = { margin:0, filename:docFilename(), image:{type:"jpeg",quality:0.95},
+    html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",scrollX:0,scrollY:0},
+    jsPDF:{unit:"mm",format:"a4",orientation:"portrait"} };
+  try{
+    if(document.fonts && document.fonts.ready) await document.fonts.ready;
+    let w = html2pdf().set(opt).from(pages[0]).toPdf();
+    for(const pg of pages.slice(1)){
+      w = w.get("pdf").then(pdf=>pdf.addPage()).from(pg).toContainer().toCanvas().toPdf();
+    }
+    await w.save();
+    toast("PDF téléchargé : "+opt.filename);
+  }catch(e){
+    console.error(e); toast("Échec de la génération du PDF : utilisez « Imprimer » puis « Enregistrer au format PDF ».");
+  }finally{
+    holder.remove(); btn.disabled=false; btn.innerHTML=label;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Navigation & événements
+ * ------------------------------------------------------------------ */
+function go(id){
+  cur = id; visited.add(id); render();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function next(){
+  const m = missingFor(cur);
+  if(m.length){ $("#missing-slot").innerHTML = `<span class="missing">À compléter : ${esc(m.join(", "))}</span>`; return; }
+  const d = decide();
+  const steps = active();
+  if(d.code!=="incomplet"){ visited.add("resultat"); go("resultat"); return; }
+  const i = steps.findIndex(s=>s.id===cur);
+  go(steps[i+1].id);
+}
+function prev(){
+  const steps = active();
+  if(cur==="resultat"){ go(stopStep()); return; }
+  const i = steps.findIndex(s=>s.id===cur);
+  if(i>0) go(steps[i-1].id);
+}
+function stopStep(){
+  const d = decide();
+  if(d.code==="incomplet") return d.stage;
+  if(S.circuit==="spontanee"){
+    const age=num(S.age);
+    if(age<16||age>65||S.consent==="non") return "patiente";
+    if(!SYMPT.some(s=>S.sympt[s[0]]==="oui")||S.sympt.recent==="non") return "symptomes";
+    if(URG.some(u=>S.urg[u[0]]==="oui")) return "urgence";
+    if(EXCL.some(e=>S.excl[e[0]]==="oui")) return "exclusion";
+    if(VITALS.some(v=>{const n=num(S.clin[v[0]]);return n!==null&&v[4](n);})) return "clinique";
+  }
+  return "bandelette";
+}
+
+document.addEventListener("change", e=>{
+  const t = e.target;
+  if(t.matches('input[type="radio"][data-k]')){
+    let v = t.value;
+    set(t.dataset.k, v);
+    if(t.dataset.k==="circuit"){ /* pas de reset : on garde les réponses */ }
+    // si une réponse change le parcours, oublier les étapes au-delà
+    trimVisited();
+    if(t.dataset.rr || cur==="resultat"){ render(t.id); return; }
+    const sg = t.closest(".seg"), qq = t.closest(".q");
+    const opts = [...sg.querySelectorAll("input")];
+    sg.dataset.i = opts.indexOf(t);
+    sg.dataset.tone = v===sg.dataset.bad ? "bad" : (v===sg.dataset.ok ? "ok" : "");
+    if(qq) qq.dataset.bad = v===sg.dataset.bad ? 1 : 0;
+    $("#missing-slot") && ($("#missing-slot").innerHTML="");
+    renderSummary(); refreshNextLabel();
+  }
+  if(t.matches("select[data-k]")){ set(t.dataset.k,t.value); render(t.id); }
+  if(t.matches("input[data-prod]")){
+    S._prodTouched = true;
+    t.checked ? S.products.add(t.dataset.prod) : S.products.delete(t.dataset.prod);
+    const bd = t.closest(".panel").querySelector(".panel-title .badge"); if(bd) bd.textContent = `${S.products.size} choisi${S.products.size>1?"s":""}`;
+    renderDocs();
+  }
+});
+let docTimer;
+document.addEventListener("input", e=>{
+  const t = e.target;
+  if(t.matches("[data-p]")){ P[t.dataset.p]=t.value; savePharma(); if(cur==="resultat"){clearTimeout(docTimer);docTimer=setTimeout(renderDocs,250);} return; }
+  if(!t.matches("[data-k]") || t.type==="radio" || t.tagName==="SELECT") return;
+  set(t.dataset.k, t.value);
+  const ms = $("#missing-slot"); if(ms) ms.innerHTML="";
+  if(t.dataset.k==="age"){
+    const age=num(S.age), el=$("#age-badge");
+    if(el) el.innerHTML = age===null ? "" : (S.circuit==="spontanee" ? ((age<16||age>65) ? `<span class="badge bad">Hors protocole : 16 à 65 ans</span>` : `<span class="badge ok">Âge éligible</span>`) : (age<16 ? `<span class="badge bad">Moins de 16 ans</span>`:`<span class="badge ok">16 ans et plus</span>`));
+  }
+  if(t.dataset.k.startsWith("clin.")){
+    const k=t.dataset.k.slice(5), v=VITALS.find(x=>x[0]===k), n=num(t.value), fl=document.querySelector(`[data-flag="${k}"]`);
+    if(fl){ fl.className = "vital-flag "+(n===null?"":v[4](n)?"bad":"ok"); fl.textContent = n===null?`seuil ${v[5]}`:v[4](n)?`hors seuil · ${v[5]}`:"normal"; }
+  }
+  trimVisited();
+  renderSummary(); refreshNextLabel();
+  if(cur==="resultat"){ clearTimeout(docTimer); docTimer=setTimeout(renderDocs,250); }
+});
+function refreshNextLabel(){
+  const b=$("#btn-next"); if(!b) return;
+  const d=decide(); const ends = missingFor(cur).length===0 && d.code!=="incomplet";
+  b.textContent = (ends?"Voir le résultat":"Continuer")+" →";
+}
+function trimVisited(){
+  const steps = active(); const i = steps.findIndex(s=>s.id===cur);
+  visited = new Set(steps.slice(0,i+1).map(s=>s.id).filter(id=>visited.has(id)));
+  renderRail();
+}
+
+document.addEventListener("click", e=>{
+  const t = e.target.closest("button"); if(!t) return;
+  if(t.dataset.go){ go(t.dataset.go); return; }
+  if(t.dataset.tab){ docTab=t.dataset.tab; renderDocs(); return; }
+  if(t.dataset.rmcustom!=null){ S.custom.splice(+t.dataset.rmcustom,1); render(); return; }
+  switch(t.id){
+    case "btn-next": next(); break;
+    case "btn-prev": prev(); break;
+    case "btn-pdf": downloadPDF(); break;
+    case "btn-print": printDoc(); break;
+    case "c-add": {
+      const n=$("#c-name").value.trim(), p=$("#c-poso").value.trim();
+      if(!n){ $("#c-name").focus(); return; }
+      S.custom.push({name:n,poso:p||"Selon les conseils de votre pharmacien"}); render(); break;
+    }
+    case "btn-reset": {
+      if(t.dataset.confirm!=="1"){ t.dataset.confirm="1"; t.textContent="Confirmer l'effacement"; t.classList.add("btn-calm"); setTimeout(()=>{t.dataset.confirm="";t.textContent="Nouvelle patiente";t.classList.remove("btn-calm");},3500); return; }
+      t.dataset.confirm=""; t.textContent="Nouvelle patiente"; t.classList.remove("btn-calm");
+      S = blank(); cur="patiente"; visited=new Set(["patiente"]); docTab="fiche"; render(); toast("Dossier effacé. Prêt pour une nouvelle patiente.");
+      break;
+    }
+  }
+});
+
+$("#today-tag").textContent = today.toLocaleDateString("fr-FR",{weekday:"short",day:"2-digit",month:"short"}).replace(".","");
+render();
+</script>
+</body>
+</html>
